@@ -51,7 +51,6 @@ general:
     default-here-radius: 5
     default-tool-command: ""
     check-for-updates: true
-    op-permissions: false
 mysql:
     hawkeye-table: hawkeye
     port: 3306
