@@ -20,26 +20,31 @@ public class MonitorWorldListener extends HawkEyeListener {
 		super(HawkEye);
 	}
 
-	@HawkEvent(dataType = {DataType.TREE_GROW, DataType.MUSHROOM_GROW})
+	@HawkEvent(dataType = { DataType.TREE_GROW, DataType.MUSHROOM_GROW })
 	public void onStructureGrow(StructureGrowEvent event) {
-		//Sort out structure type
+		// Sort out structure type
 		DataType type = DataType.TREE_GROW;
-		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = DataType.MUSHROOM_GROW;
+		if (event.getSpecies().name().toLowerCase().contains("mushroom"))
+			type = DataType.MUSHROOM_GROW;
 
-		//Loop through blocks
+		// Loop through blocks
 		for (BlockState block : event.getBlocks()) {
 
-			//Don't log the bottom block
-			if (block.getType() == Material.MYCEL || block.getType() == Material.DIRT || block.getType() == Material.GRASS) continue;
+			// Don't log the bottom block
+			if (block.getType() == Material.MYCEL || block.getType() == Material.DIRT
+					|| block.getType() == Material.GRASS)
+				continue;
 
 			Location loc = new Location(event.getWorld(), block.getX(), block.getY(), block.getZ());
-			//If a player did it
+			// If a player did it
 			if (event.getPlayer() != null) {
-				DataManager.addEntry(new BlockChangeEntry(event.getPlayer(), type, loc, "0", BlockUtil.getBlockString(block)));
+				DataManager.addEntry(
+						new BlockChangeEntry(event.getPlayer(), type, loc, "0", BlockUtil.getBlockString(block)));
 			}
-			//If the environment did it
+			// If the environment did it
 			else {
-				DataManager.addEntry(new BlockChangeEntry("Environment", type, loc, "0", BlockUtil.getBlockString(block)));
+				DataManager
+						.addEntry(new BlockChangeEntry("Environment", type, loc, "0", BlockUtil.getBlockString(block)));
 			}
 		}
 

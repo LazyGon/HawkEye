@@ -13,9 +13,9 @@ import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
- * DataBase cleansing utility.
- * Deletes data older than date specified in config.
+ * DataBase cleansing utility. Deletes data older than date specified in config.
  * This class should be run on a {Timer} in a separate thread
+ * 
  * @author oliverw92
  */
 public class CleanseUtil extends TimerTask {
@@ -24,42 +24,51 @@ public class CleanseUtil extends TimerTask {
 	private int interval = 1200;
 
 	/**
-	 * Initiates utility.
-	 * Throws exception if there are any errors processing the config time value
+	 * Initiates utility. Throws exception if there are any errors processing the
+	 * config time value
+	 * 
 	 * @throws Exception
 	 */
 	public CleanseUtil() throws Exception {
 
-		//Check for invalid ages/periods
-		List<String> arr = Arrays.asList(new String[]{"0", "0s"});
-		if (Config.CleanseAge == null || Config.CleansePeriod == null || arr.contains(Config.CleanseAge) || arr.contains(Config.CleansePeriod)) {
+		// Check for invalid ages/periods
+		List<String> arr = Arrays.asList(new String[] { "0", "0s" });
+		if (Config.CleanseAge == null || Config.CleansePeriod == null || arr.contains(Config.CleanseAge)
+				|| arr.contains(Config.CleansePeriod)) {
 			return;
 		}
 
-		//Parse cleanse age
+		// Parse cleanse age
 		ageToDate();
 
-		//Parse interval
-        int temp = 0;
+		// Parse interval
+		int temp = 0;
 		String nums = "";
 		for (int i = 0; i < Config.CleansePeriod.length(); i++) {
-			String c = Config.CleansePeriod.substring(i, i+1);
+			String c = Config.CleansePeriod.substring(i, i + 1);
 			if (Util.isInteger(c)) {
 				nums += c;
 				continue;
 			}
 			int num = Integer.parseInt(nums);
-			if (c.equals("w")) temp += 604800*num;
-			else if (c.equals("d")) temp += 86400*num;
-			else if (c.equals("h")) temp += 3600*num;
-			else if (c.equals("m")) temp += 60*num;
-			else if (c.equals("s")) temp += num;
-			else throw new Exception();
+			if (c.equals("w"))
+				temp += 604800 * num;
+			else if (c.equals("d"))
+				temp += 86400 * num;
+			else if (c.equals("h"))
+				temp += 3600 * num;
+			else if (c.equals("m"))
+				temp += 60 * num;
+			else if (c.equals("s"))
+				temp += num;
+			else
+				throw new Exception();
 			nums = "";
 		}
-		if (temp > 0) interval = temp;
+		if (temp > 0)
+			interval = temp;
 
-		//Start timer
+		// Start timer
 		Util.info("Starting database cleanse thread with a period of " + interval + " seconds");
 		DataManager.cleanseTimer = new Timer();
 		DataManager.cleanseTimer.scheduleAtFixedRate(this, 0, interval * 1000);
@@ -80,12 +89,12 @@ public class CleanseUtil extends TimerTask {
 			conn = DataManager.getConnection();
 			stmnt = conn.createStatement();
 			Util.debug("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `date` < '" + date + "'");
-			int affected = stmnt.executeUpdate("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `date` < '" + date + "'");
+			int affected = stmnt
+					.executeUpdate("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `date` < '" + date + "'");
 			Util.info("Deleted " + affected + " row(s) from database");
 		} catch (Exception ex) {
 			Util.severe("Unable to execute cleanse utility: " + ex);
-		}
-		finally {
+		} finally {
 			try {
 				stmnt.close();
 			} catch (SQLException e) {
@@ -109,18 +118,24 @@ public class CleanseUtil extends TimerTask {
 
 		String nums = "";
 		for (int i = 0; i < Config.CleanseAge.length(); i++) {
-			String c = Config.CleanseAge.substring(i, i+1);
+			String c = Config.CleanseAge.substring(i, i + 1);
 			if (Util.isInteger(c)) {
 				nums += c;
 				continue;
 			}
 			int num = Integer.parseInt(nums);
-			if (c.equals("w")) weeks = num;
-			else if (c.equals("d")) days = num;
-			else if (c.equals("h")) hours = num;
-			else if (c.equals("m")) mins = num;
-			else if (c.equals("s")) secs = num;
-			else throw new Exception();
+			if (c.equals("w"))
+				weeks = num;
+			else if (c.equals("d"))
+				days = num;
+			else if (c.equals("h"))
+				hours = num;
+			else if (c.equals("m"))
+				mins = num;
+			else if (c.equals("s"))
+				secs = num;
+			else
+				throw new Exception();
 			nums = "";
 		}
 

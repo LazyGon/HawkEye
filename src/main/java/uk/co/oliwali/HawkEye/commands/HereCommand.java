@@ -11,6 +11,7 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 /**
  * Searches around the player for 'here' {@link DataType}s
+ * 
  * @author oliverw92
  */
 public class HereCommand extends BaseCommand {
@@ -24,39 +25,45 @@ public class HereCommand extends BaseCommand {
 	@Override
 	public boolean execute() {
 
-		//Create new parser
+		// Create new parser
 		SearchParser parser = null;
 		try {
 
-			//Check for valid integer
-			if (args.size() != 0 && !Util.isInteger(args.get(0))) throw new IllegalArgumentException("Invalid integer supplied for radius!");
+			// Check for valid integer
+			if (args.size() != 0 && !Util.isInteger(args.get(0)))
+				throw new IllegalArgumentException("Invalid integer supplied for radius!");
 			int integer;
-			if (args.size() > 0) integer = Integer.parseInt(args.get(0));
-			else integer = Config.DefaultHereRadius;
+			if (args.size() > 0)
+				integer = Integer.parseInt(args.get(0));
+			else
+				integer = Config.DefaultHereRadius;
 			if ((integer > Config.MaxRadius && Config.MaxRadius > 0) || integer < 0)
 				throw new IllegalArgumentException("Invalid radius supplied supplied!");
 
-			//New search parser
+			// New search parser
 			parser = new SearchParser(player, integer);
 
-			//Add in DataTypes
+			// Add in DataTypes
 			for (DataType type : DataType.values())
-				if (type.canHere()) parser.actions.add(type);
+				if (type.canHere())
+					parser.actions.add(type);
 
-			//Check if players were supplied
+			// Check if players were supplied
 			if (args.size() > 1)
-				for (String p : args.get(1).split(",")) parser.players.add(p);
+				for (String p : args.get(1).split(","))
+					parser.players.add(p);
 
-			//Add in 'here' actions
+			// Add in 'here' actions
 			for (DataType type : DataType.values())
-				if (type.canHere()) parser.actions.add(type);
+				if (type.canHere())
+					parser.actions.add(type);
 
 		} catch (IllegalArgumentException e) {
 			Util.sendMessage(sender, "&c" + e.getMessage());
 			return true;
 		}
 
-		//Run the search query
+		// Run the search query
 		new SearchQuery(new SearchCallback(session), parser, SearchDir.DESC);
 		return true;
 

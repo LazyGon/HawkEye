@@ -12,9 +12,10 @@ import uk.co.oliwali.HawkEye.SessionManager;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
- * Abstract class representing a command.
- * When run by the command manager ({@link HawkEye}), it pre-processes all the data into more useful forms.
+ * Abstract class representing a command. When run by the command manager
+ * ({@link HawkEye}), it pre-processes all the data into more useful forms.
  * Extending classes should adjust required fields in their constructor
+ * 
  * @author Oli
  *
  */
@@ -33,12 +34,14 @@ public abstract class BaseCommand {
 
 	/**
 	 * Method called by the command manager in {@link HawkEye} to run the command.
-	 * Arguments are processed into a list for easier manipulating.
-	 * Argument lengths, permissions and sender types are all handled.
+	 * Arguments are processed into a list for easier manipulating. Argument
+	 * lengths, permissions and sender types are all handled.
+	 * 
 	 * @param csender {@link CommandSender} to send data to
 	 * @param preArgs arguments to be processed
-	 * @param cmd command being executed
-	 * @return true on success, false if there is an error in the checks or if the extending command returns false
+	 * @param cmd     command being executed
+	 * @return true on success, false if there is an error in the checks or if the
+	 *         extending command returns false
 	 */
 	public boolean run(HawkEye instace, CommandSender csender, String[] preArgs, String cmd) {
 
@@ -47,26 +50,26 @@ public abstract class BaseCommand {
 		session = SessionManager.getSession(sender);
 		usedCommand = cmd;
 
-		//Sort out arguments
+		// Sort out arguments
 		args.clear();
 		for (String arg : preArgs)
 			args.add(arg);
 
-		//Remove commands from arguments
+		// Remove commands from arguments
 		for (int i = 0; i < name.split(" ").length && i < args.size(); i++)
 			args.remove(0);
 
-		//Check arg lengths
+		// Check arg lengths
 		if (argLength > args.size()) {
 			sendUsage();
 			return true;
 		}
 
-		//Check if sender should be a player
+		// Check if sender should be a player
 		if (bePlayer && !(sender instanceof Player))
 			return false;
 		if (sender instanceof Player)
-			player = (Player)sender;
+			player = (Player) sender;
 		if (!permission()) {
 			Util.sendMessage(sender, "&cYou do not have permission to do that!");
 			return false;
@@ -76,14 +79,16 @@ public abstract class BaseCommand {
 	}
 
 	/**
-	 * Runs the extending command.
-	 * Should only be run by the BaseCommand after all pre-processing is done
+	 * Runs the extending command. Should only be run by the BaseCommand after all
+	 * pre-processing is done
+	 * 
 	 * @return true on success, false otherwise
 	 */
 	public abstract boolean execute();
 
 	/**
 	 * Performs the extending command's permission check.
+	 * 
 	 * @return true if the user has permission, false if not
 	 */
 	public abstract boolean permission();
@@ -97,7 +102,7 @@ public abstract class BaseCommand {
 	 * Displays the help information for this command
 	 */
 	public void sendUsage() {
-		Util.sendMessage(sender, "&c/"+usedCommand+" " + name + " " + usage);
+		Util.sendMessage(sender, "&c/" + usedCommand + " " + name + " " + usage);
 	}
 
 }

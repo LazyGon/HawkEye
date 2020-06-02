@@ -11,8 +11,9 @@ import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
- * Manages the MySQL connection pool.
- * By default 10 connections are maintained at a time
+ * Manages the MySQL connection pool. By default 10 connections are maintained
+ * at a time
+ * 
  * @author oliverw92
  */
 public class ConnectionManager implements Closeable {
@@ -27,8 +28,9 @@ public class ConnectionManager implements Closeable {
 
 	/**
 	 * Creates the connection manager and starts the reaper
-	 * @param url url of the database
-	 * @param user username to use
+	 * 
+	 * @param url      url of the database
+	 * @param user     username to use
 	 * @param password password for the database
 	 * @throws ClassNotFoundException
 	 */
@@ -60,6 +62,7 @@ public class ConnectionManager implements Closeable {
 
 	/**
 	 * Returns a connection from the pool
+	 * 
 	 * @return returns a {JDCConnection}
 	 * @throws SQLException
 	 */
@@ -86,10 +89,11 @@ public class ConnectionManager implements Closeable {
 		return conn;
 	}
 
-    /**
-     * Removes a connection from the pool
-     * @param {JDCConnection} to remove
-     */
+	/**
+	 * Removes a connection from the pool
+	 * 
+	 * @param {JDCConnection} to remove
+	 */
 	public static synchronized void removeConn(Connection conn) {
 		connections.remove(conn);
 	}
@@ -123,16 +127,17 @@ public class ConnectionManager implements Closeable {
 
 	/**
 	 * Reaps connections
+	 * 
 	 * @author oliverw92
 	 */
-	private class ConnectionReaper extends Thread
-	{
+	private class ConnectionReaper extends Thread {
 		@Override
 		public void run() {
 			while (true) {
 				try {
 					Thread.sleep(300000);
-				} catch (final InterruptedException e) {}
+				} catch (final InterruptedException e) {
+				}
 				reapConnections();
 			}
 		}

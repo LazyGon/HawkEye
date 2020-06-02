@@ -9,6 +9,7 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 /**
  * Implementation of BaseCallback for use in search commands
+ * 
  * @author oliverw92
  */
 public class SearchCallback extends BaseCallback {

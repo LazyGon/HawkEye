@@ -7,6 +7,7 @@ import uk.co.oliwali.HawkEye.entry.DataEntry;
 
 /**
  * Abstract class representing a callback for use in {@SearchQuery}
+ * 
  * @author oliverw92
  */
 public abstract class BaseCallback {
@@ -23,7 +24,8 @@ public abstract class BaseCallback {
 
 	/**
 	 * Called if an error occurs during the {@SearchQuery}
-	 * @param error {@SearchError} that has occurred
+	 * 
+	 * @param error   {@SearchError} that has occurred
 	 * @param message error message with more detail
 	 */
 	public abstract void error(SearchError error, String message);

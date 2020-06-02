@@ -6,8 +6,9 @@ import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
- * Applies a local rollback to the world
- * Error handling for user input is done using exceptions to keep code neat.
+ * Applies a local rollback to the world Error handling for user input is done
+ * using exceptions to keep code neat.
+ * 
  * @author oliverw92
  */
 public class PreviewApplyCommand extends BaseCommand {
@@ -21,13 +22,13 @@ public class PreviewApplyCommand extends BaseCommand {
 	@Override
 	public boolean execute() {
 
-		//Check if player already has a rollback processing
+		// Check if player already has a rollback processing
 		if (!session.isInPreview()) {
 			Util.sendMessage(sender, "&cNo preview to apply!");
 			return true;
 		}
 
-		//Undo local changes to the player
+		// Undo local changes to the player
 		Util.sendMessage(sender, "&cAttempting to apply rollback to world...");
 		new Rollback(RollbackType.GLOBAL, session);
 		session.setInPreview(false);

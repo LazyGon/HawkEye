@@ -19,7 +19,7 @@ public class DeleteCommand extends BaseCommand {
 	@Override
 	public boolean execute() {
 
-		//Parse arguments
+		// Parse arguments
 		SearchParser parser = null;
 		try {
 			parser = new SearchParser(sender, args);
@@ -28,7 +28,7 @@ public class DeleteCommand extends BaseCommand {
 			return true;
 		}
 
-		//Create new SeachQuery with data
+		// Create new SeachQuery with data
 		new SearchQuery(new DeleteCallback(session), parser, SearchDir.DESC);
 		return true;
 

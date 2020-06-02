@@ -1,4 +1,5 @@
 package uk.co.oliwali.HawkEye.util;
+
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
@@ -14,8 +15,8 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import uk.co.oliwali.HawkEye.HawkEye;
 
 /**
- * Permissions handler for HawkEye
- * Supports multiple permissions systems
+ * Permissions handler for HawkEye Supports multiple permissions systems
+ * 
  * @author oliverw92
  */
 public class Permission {
@@ -28,6 +29,7 @@ public class Permission {
 
 	/**
 	 * Check permissions plugins, deciding which one to use
+	 * 
 	 * @param instance
 	 */
 	public Permission(HawkEye instance) {
@@ -35,7 +37,8 @@ public class Permission {
 		PluginManager pm = Bukkit.getServer().getPluginManager();
 
 		if (pm.isPluginEnabled("Vault")) {
-			RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+			RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> rsp = Bukkit.getServer()
+					.getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
 			if (rsp != null) {
 				vaultPermissions = rsp.getProvider();
 				if (vaultPermissions != null) {
@@ -47,23 +50,23 @@ public class Permission {
 		}
 
 		if (pm.isPluginEnabled("PermissionsEx")) {
-        	handler = PermissionPlugin.PERMISSIONSEX;
-        	permissionsEx = PermissionsEx.getPermissionManager();
-        	Util.info("Using PermissionsEx for user permissions");
+			handler = PermissionPlugin.PERMISSIONSEX;
+			permissionsEx = PermissionsEx.getPermissionManager();
+			Util.info("Using PermissionsEx for user permissions");
+		} else if (pm.isPluginEnabled("Permissions")) {
+			permissionPlugin = ((Permissions) plugin.getServer().getPluginManager().getPlugin("Permissions"))
+					.getHandler();
+			handler = PermissionPlugin.PERMISSIONS;
+			Util.info("Using Permissions for user permissions");
+		} else {
+			Util.info("No permission handler detected, defaulting to superperms");
 		}
-        else if (pm.isPluginEnabled("Permissions")) {
-        	permissionPlugin = ((Permissions)plugin.getServer().getPluginManager().getPlugin("Permissions")).getHandler();
-        	handler = PermissionPlugin.PERMISSIONS;
-        	Util.info("Using Permissions for user permissions");
-        }
-        else {
-        	Util.info("No permission handler detected, defaulting to superperms");
-        }
 	}
 
 	/**
-	 * Private method for checking a users permission level.
-	 * Permission checks from other classes should go through a separate method for each node.
+	 * Private method for checking a users permission level. Permission checks from
+	 * other classes should go through a separate method for each node.
+	 * 
 	 * @param sender
 	 * @param node
 	 * @return true if the user has permission, false if not
@@ -71,7 +74,7 @@ public class Permission {
 	private static boolean hasPermission(CommandSender sender, String node) {
 		if (!(sender instanceof Player))
 			return true;
-		Player player = (Player)sender;
+		Player player = (Player) sender;
 		if (Config.OpPermissions && player.isOp())
 			return true;
 		switch (handler) {
@@ -89,6 +92,7 @@ public class Permission {
 
 	/**
 	 * Permission to view different pages
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -98,6 +102,7 @@ public class Permission {
 
 	/**
 	 * Permission to search the logs
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -107,6 +112,7 @@ public class Permission {
 
 	/**
 	 * Permission to search a specific data type
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -116,6 +122,7 @@ public class Permission {
 
 	/**
 	 * Permission to teleport to the location of a result
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -125,6 +132,7 @@ public class Permission {
 
 	/**
 	 * Permission to use the rollback command
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -134,6 +142,7 @@ public class Permission {
 
 	/**
 	 * Permission to the hawkeye tool
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -143,6 +152,7 @@ public class Permission {
 
 	/**
 	 * Permission to be notified of rule breaks
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -152,6 +162,7 @@ public class Permission {
 
 	/**
 	 * Permission to preview rollbacks
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -159,17 +170,19 @@ public class Permission {
 		return hasPermission(player, "hawkeye.preview");
 	}
 
-    /**
-     * Permission to bind a tool
-     * @param player
-     * @return
-     */
+	/**
+	 * Permission to bind a tool
+	 * 
+	 * @param player
+	 * @return
+	 */
 	public static boolean toolBind(CommandSender player) {
 		return hasPermission(player, "hawkeye.tool.bind");
 	}
 
 	/**
 	 * Permission to rebuild
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -179,6 +192,7 @@ public class Permission {
 
 	/**
 	 * Permission to delete entires
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -188,6 +202,7 @@ public class Permission {
 
 	/**
 	 * Check if a player is in a group
+	 * 
 	 * @param world
 	 * @param player
 	 * @param group
@@ -196,6 +211,7 @@ public class Permission {
 	public static boolean inGroup(World world, Player player, String group) {
 		return inGroup(world.getName(), player.getName(), group);
 	}
+
 	public static boolean inGroup(String world, String player, String group) {
 		switch (handler) {
 			case VAULT:
@@ -210,13 +226,11 @@ public class Permission {
 
 	/**
 	 * Enumeration containing supported permission systems
+	 * 
 	 * @author oliverw92
 	 */
 	private enum PermissionPlugin {
-		VAULT,
-		PERMISSIONSEX,
-		PERMISSIONS,
-		BUKKITPERMS
+		VAULT, PERMISSIONSEX, PERMISSIONS, BUKKITPERMS
 	}
 
 }

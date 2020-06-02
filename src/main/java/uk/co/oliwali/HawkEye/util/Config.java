@@ -9,8 +9,9 @@ import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
 
 /**
- * Configuration manager for HawkEye.
- * Any field with the first letter capitalised is a config option
+ * Configuration manager for HawkEye. Any field with the first letter
+ * capitalised is a config option
+ * 
  * @author oliverw92
  */
 public class Config {
@@ -46,6 +47,7 @@ public class Config {
 
 	/**
 	 * Loads the config from file and validates the data
+	 * 
 	 * @param plugin
 	 */
 	public Config(HawkEye plugin) {
@@ -53,9 +55,9 @@ public class Config {
 		config = plugin.getConfig().getRoot();
 		config.options().copyDefaults(true);
 		config.set("version", plugin.version);
-        plugin.saveConfig();
+		plugin.saveConfig();
 
-		//Load values
+		// Load values
 		CommandFilter = config.getStringList("command-filter");
 		BlockFilter = config.getIntegerList("block-filter");
 		IgnoreWorlds = config.getStringList("ignore-worlds");
@@ -75,7 +77,8 @@ public class Config {
 		OpPermissions = config.getBoolean("general.op-permissions");
 		DbUser = config.getString("mysql.username");
 		DbPassword = config.getString("mysql.password");
-		DbUrl = "jdbc:mysql://" + config.getString("mysql.hostname") + ":" + config.getInt("mysql.port") + "/" + config.getString("mysql.database");
+		DbUrl = "jdbc:mysql://" + config.getString("mysql.hostname") + ":" + config.getInt("mysql.port") + "/"
+				+ config.getString("mysql.database");
 		DbDatabase = config.getString("mysql.database");
 		DbHawkEyeTable = config.getString("mysql.hawkeye-table");
 		DbPlayerTable = config.getString("mysql.player-table");
@@ -92,6 +95,7 @@ public class Config {
 
 	/**
 	 * Check if a {@link DataType} is logged or not
+	 * 
 	 * @param dataType
 	 * @return true or false
 	 */

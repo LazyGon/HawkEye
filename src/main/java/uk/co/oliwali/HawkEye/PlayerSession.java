@@ -8,8 +8,9 @@ import uk.co.oliwali.HawkEye.entry.DataEntry;
 import uk.co.oliwali.HawkEye.util.Config;
 
 /**
- * Stores data specific to each player on the server.
- * This class is persistent over play quit and rejoins, but not over server reboots
+ * Stores data specific to each player on the server. This class is persistent
+ * over play quit and rejoins, but not over server reboots
+ * 
  * @author oliverw92
  */
 public class PlayerSession {
@@ -29,6 +30,7 @@ public class PlayerSession {
 	public CommandSender getSender() {
 		return sender;
 	}
+
 	public void setSender(CommandSender sender) {
 		this.sender = sender;
 	}
@@ -36,6 +38,7 @@ public class PlayerSession {
 	public List<DataEntry> getSearchResults() {
 		return searchResults;
 	}
+
 	public void setSearchResults(List<DataEntry> searchResults) {
 		this.searchResults = searchResults;
 	}
@@ -43,6 +46,7 @@ public class PlayerSession {
 	public List<DataEntry> getRollbackResults() {
 		return rollbackResults;
 	}
+
 	public void setRollbackResults(List<DataEntry> rollbackResults) {
 		this.rollbackResults = rollbackResults;
 	}
@@ -50,6 +54,7 @@ public class PlayerSession {
 	public boolean isUsingTool() {
 		return usingTool;
 	}
+
 	public void setUsingTool(boolean usingTool) {
 		this.usingTool = usingTool;
 	}
@@ -57,6 +62,7 @@ public class PlayerSession {
 	public boolean doingRollback() {
 		return doingRollback;
 	}
+
 	public void setDoingRollback(boolean doingRollback) {
 		this.doingRollback = doingRollback;
 	}
@@ -64,6 +70,7 @@ public class PlayerSession {
 	public String[] getToolCommand() {
 		return toolCommand;
 	}
+
 	public void setToolCommand(String[] toolCommand) {
 		this.toolCommand = toolCommand;
 	}
@@ -71,6 +78,7 @@ public class PlayerSession {
 	public boolean isInPreview() {
 		return inPreview;
 	}
+
 	public void setInPreview(boolean inPreview) {
 		this.inPreview = inPreview;
 	}

@@ -74,24 +74,24 @@ public class HawkEye extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
-		//Set up config and permissions
-        PluginManager pm = getServer().getPluginManager();
+		// Set up config and permissions
+		PluginManager pm = getServer().getPluginManager();
 		server = getServer();
 		name = this.getDescription().getName();
-        version = this.getDescription().getVersion();
+		version = this.getDescription().getVersion();
 
 		Util.info("Starting HawkEye " + version + " initiation process...");
 
-		//Load config and permissions
-        config = new Config(this);
-        new Permission(this);
+		// Load config and permissions
+		config = new Config(this);
+		new Permission(this);
 
-        versionCheck();
+		versionCheck();
 
-        new SessionManager();
+		new SessionManager();
 
-        //Initiate database connection
-        try {
+		// Initiate database connection
+		try {
 			new DataManager(this);
 		} catch (Exception e) {
 			Util.severe("Error initiating HawkEye database connection, disabling plugin");
@@ -103,105 +103,113 @@ public class HawkEye extends JavaPlugin {
 
 		containerManager = new ContainerAccessManager();
 
-	    registerListeners(pm);
+		registerListeners(pm);
 
-	    registerCommands();
+		registerCommands();
 
-        Util.info("Version " + version + " enabled!");
+		Util.info("Version " + version + " enabled!");
 
 	}
 
 	/**
-	 * Checks if any updates are available for HawkEye
-	 * Outputs console warning if updates are needed
+	 * Checks if any updates are available for HawkEye Outputs console warning if
+	 * updates are needed
 	 */
 	private void versionCheck() {
 
-		//Check if update checking enabled
+		// Check if update checking enabled
 		if (!Config.CheckUpdates) {
 			Util.info("Update checking is disabled, this is not recommended!");
 			return;
 		}
 
-        //Perform version check
-        Util.info("Performing update check...");
-        try {
+		// Perform version check
+		Util.info("Performing update check...");
+		try {
 
-        	//Values
-        	int updateVer;
-        	int curVer;
-        	int updateHot = 0;
-        	int curHot = 0;
-        	int updateBuild;
-        	int curBuild;
-        	String info;
+			// Values
+			int updateVer;
+			int curVer;
+			int updateHot = 0;
+			int curHot = 0;
+			int updateBuild;
+			int curBuild;
+			String info;
 
-        	//Get version file
-        	URLConnection yc = new URL("https://raw.github.com/oliverw92/HawkEye/master/version.txt").openConnection();
-    		BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
+			// Get version file
+			URLConnection yc = new URL("https://raw.github.com/oliverw92/HawkEye/master/version.txt").openConnection();
+			BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
 
-    		//Get version number
-    		String updateVersion = in.readLine().replace(".", "");
+			// Get version number
+			String updateVersion = in.readLine().replace(".", "");
 
-    		//Check for hot fixes on new version
-    		if (Character.isLetter(updateVersion.charAt(updateVersion.length() - 1))) {
-    			updateHot = Character.getNumericValue(updateVersion.charAt(updateVersion.length() - 1));
-    			updateVer = Integer.parseInt(updateVersion.substring(0, updateVersion.length() - 1));
-    		}
-    		else updateVer = Integer.parseInt(updateVersion);
+			// Check for hot fixes on new version
+			if (Character.isLetter(updateVersion.charAt(updateVersion.length() - 1))) {
+				updateHot = Character.getNumericValue(updateVersion.charAt(updateVersion.length() - 1));
+				updateVer = Integer.parseInt(updateVersion.substring(0, updateVersion.length() - 1));
+			} else
+				updateVer = Integer.parseInt(updateVersion);
 
-    		//Check for hot fixes on current version
-    		if (Character.isLetter(version.charAt(version.length() - 1))) {
-    			String tversion = version.replace(".", "");
-    			curHot = Character.getNumericValue(tversion.charAt(tversion.length() - 1));
-    			curVer = Integer.parseInt(tversion.substring(0, tversion.length() - 1));
-    		}
-    		else curVer = Integer.parseInt(version.replace(".", ""));
+			// Check for hot fixes on current version
+			if (Character.isLetter(version.charAt(version.length() - 1))) {
+				String tversion = version.replace(".", "");
+				curHot = Character.getNumericValue(tversion.charAt(tversion.length() - 1));
+				curVer = Integer.parseInt(tversion.substring(0, tversion.length() - 1));
+			} else
+				curVer = Integer.parseInt(version.replace(".", ""));
 
-    		//Extract Bukkit build from server versions
-    		Pattern pattern = Pattern.compile("-b(\\d*?)jnks", Pattern.CASE_INSENSITIVE);
+			// Extract Bukkit build from server versions
+			Pattern pattern = Pattern.compile("-b(\\d*?)jnks", Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(server.getVersion());
-			if (!matcher.find() || matcher.group(1) == null) throw new Exception();
+			if (!matcher.find() || matcher.group(1) == null)
+				throw new Exception();
 			curBuild = Integer.parseInt(matcher.group(1));
-    		updateBuild = Integer.parseInt(in.readLine());
+			updateBuild = Integer.parseInt(in.readLine());
 
-    		//Get custom info string
-    		info = in.readLine();
+			// Get custom info string
+			info = in.readLine();
 
-    		//Check versions
-    		if (updateVer > curVer || updateVer == curVer && updateHot > curHot) {
+			// Check versions
+			if (updateVer > curVer || updateVer == curVer && updateHot > curHot) {
 				Util.warning("New version of HawkEye available: " + updateVersion);
-    			if (updateBuild > curBuild)	Util.warning("Update recommended of CraftBukkit from build " + curBuild + " to " + updateBuild + " to ensure compatibility");
-    			else Util.warning("Compatible with your current version of CraftBukkit");
-    			Util.warning("New version info: " + info);
-    		}
-    		else Util.info("No updates available for HawkEye");
-    		in.close();
+				if (updateBuild > curBuild)
+					Util.warning("Update recommended of CraftBukkit from build " + curBuild + " to " + updateBuild
+							+ " to ensure compatibility");
+				else
+					Util.warning("Compatible with your current version of CraftBukkit");
+				Util.warning("New version info: " + info);
+			} else
+				Util.info("No updates available for HawkEye");
+			in.close();
 
 		} catch (Exception e) {
 			Util.warning("Unable to perform update check!");
-			if (Config.Debug) e.printStackTrace();
+			if (Config.Debug)
+				e.printStackTrace();
 		}
 	}
 
 	/**
 	 * Checks if required plugins are loaded
+	 * 
 	 * @param pm PluginManager
 	 */
 	private void checkDependencies(PluginManager pm) {
 
-        //Check if WorldEdit is loaded
-        Plugin we = pm.getPlugin("WorldEdit");
-        if (we != null) {
-        	worldEdit = (WorldEditPlugin)we;
-        	Util.info("WorldEdit found, selection rollbacks enabled");
-        }
-        else Util.info("WARNING! WorldEdit not found, WorldEdit selection rollbacks disabled until WorldEdit is available");
+		// Check if WorldEdit is loaded
+		Plugin we = pm.getPlugin("WorldEdit");
+		if (we != null) {
+			worldEdit = (WorldEditPlugin) we;
+			Util.info("WorldEdit found, selection rollbacks enabled");
+		} else
+			Util.info(
+					"WARNING! WorldEdit not found, WorldEdit selection rollbacks disabled until WorldEdit is available");
 
 	}
 
 	/**
 	 * Registers event listeners
+	 * 
 	 * @param pm PluginManager
 	 */
 	private void registerListeners(PluginManager pm) {
@@ -219,43 +227,44 @@ public class HawkEye extends JavaPlugin {
 	 */
 	private void registerCommands() {
 
-        //Add commands
-        commands.add(new HelpCommand());
-        commands.add(new ToolBindCommand());
-        commands.add(new ToolResetCommand());
-        commands.add(new ToolCommand());
-        commands.add(new SearchCommand());
-        commands.add(new PageCommand());
-        commands.add(new TptoCommand());
-        commands.add(new HereCommand());
-        commands.add(new PreviewApplyCommand());
-        commands.add(new PreviewCancelCommand());
-        commands.add(new PreviewCommand());
-        commands.add(new RollbackCommand());
-        // if (worldEdit != null) commands.add(new WorldEditRollbackCommand());
-        commands.add(new UndoCommand());
-        commands.add(new RebuildCommand());
-        commands.add(new DeleteCommand());
+		// Add commands
+		commands.add(new HelpCommand());
+		commands.add(new ToolBindCommand());
+		commands.add(new ToolResetCommand());
+		commands.add(new ToolCommand());
+		commands.add(new SearchCommand());
+		commands.add(new PageCommand());
+		commands.add(new TptoCommand());
+		commands.add(new HereCommand());
+		commands.add(new PreviewApplyCommand());
+		commands.add(new PreviewCancelCommand());
+		commands.add(new PreviewCommand());
+		commands.add(new RollbackCommand());
+		// if (worldEdit != null) commands.add(new WorldEditRollbackCommand());
+		commands.add(new UndoCommand());
+		commands.add(new RebuildCommand());
+		commands.add(new DeleteCommand());
 
 	}
 
 	/**
 	 * Command manager for HawkEye
-	 * @param sender - {@link CommandSender}
-	 * @param cmd - {@link Command}
+	 * 
+	 * @param sender       - {@link CommandSender}
+	 * @param cmd          - {@link Command}
 	 * @param commandLabel - String
-	 * @param args[] - String[]
+	 * @param args[]       - String[]
 	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
 		if (cmd.getName().equalsIgnoreCase("hawk")) {
 			if (args.length == 0)
-				args = new String[]{"help"};
-			outer:
-			for (BaseCommand command : commands.toArray(new BaseCommand[0])) {
+				args = new String[] { "help" };
+			outer: for (BaseCommand command : commands.toArray(new BaseCommand[0])) {
 				String[] cmds = command.name.split(" ");
 				for (int i = 0; i < cmds.length; i++)
-					if (i >= args.length || !cmds[i].equalsIgnoreCase(args[i])) continue outer;
+					if (i >= args.length || !cmds[i].equalsIgnoreCase(args[i]))
+						continue outer;
 				return command.run(this, sender, args, commandLabel);
 			}
 			new HelpCommand().run(this, sender, args, commandLabel);

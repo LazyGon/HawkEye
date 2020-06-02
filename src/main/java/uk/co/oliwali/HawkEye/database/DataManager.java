@@ -20,8 +20,9 @@ import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
- * Handler for everything to do with the database.
- * All queries except searching goes through this class.
+ * Handler for everything to do with the database. All queries except searching
+ * goes through this class.
+ * 
  * @author oliverw92
  */
 public class DataManager extends TimerTask {
@@ -36,6 +37,7 @@ public class DataManager extends TimerTask {
 	/**
 	 * Initiates database connection pool, checks tables, starts cleansing utility
 	 * Throws an exception if it is unable to complete setup
+	 * 
 	 * @param instance
 	 * @throws Exception
 	 */
@@ -44,13 +46,13 @@ public class DataManager extends TimerTask {
 		connections = new ConnectionManager(Config.DbUrl, Config.DbUser, Config.DbPassword);
 		getConnection().close();
 
-		//Check tables and update player/world lists
+		// Check tables and update player/world lists
 		if (!checkTables())
 			throw new Exception();
 		if (!updateDbLists())
 			throw new Exception();
 
-		//Start cleansing utility
+		// Start cleansing utility
 		try {
 			new CleanseUtil();
 		} catch (Exception e) {
@@ -58,7 +60,7 @@ public class DataManager extends TimerTask {
 			Util.severe("Unable to start cleansing utility - check your cleanse age");
 		}
 
-		//Start logging timer
+		// Start logging timer
 		loggingTimer = new Timer();
 		loggingTimer.scheduleAtFixedRate(this, 2000, 2000);
 	}
@@ -68,44 +70,51 @@ public class DataManager extends TimerTask {
 	 */
 	public static void close() {
 		connections.close();
-		if (cleanseTimer != null) cleanseTimer.cancel();
-		if (loggingTimer != null) loggingTimer.cancel();
+		if (cleanseTimer != null)
+			cleanseTimer.cancel();
+		if (loggingTimer != null)
+			loggingTimer.cancel();
 	}
 
 	/**
-	 * Adds a {@link DataEntry} to the database queue.
-	 * {Rule}s are checked at this point
+	 * Adds a {@link DataEntry} to the database queue. {Rule}s are checked at this
+	 * point
+	 * 
 	 * @param entry {@link DataEntry} to be added
 	 * @return
 	 */
 	public static void addEntry(DataEntry entry) {
 
-		if (!Config.isLogged(entry.getType())) return;
+		if (!Config.isLogged(entry.getType()))
+			return;
 
-		//Check block filter
+		// Check block filter
 		switch (entry.getType()) {
-		case BLOCK_BREAK:
-			if (Config.BlockFilter.contains(BlockUtil.getBlockStringName(entry.getSqlData())))
-				return;
-			break;
-		case BLOCK_PLACE:
-			String txt = null;
-			if (entry.getSqlData().indexOf("-") == -1)
-				txt = BlockUtil.getBlockStringName(entry.getSqlData());
-			else
-				txt = BlockUtil.getBlockStringName(entry.getSqlData().substring(entry.getSqlData().indexOf("-") + 1));
-			if (Config.BlockFilter.contains(txt))
-				return;
+			case BLOCK_BREAK:
+				if (Config.BlockFilter.contains(BlockUtil.getBlockStringName(entry.getSqlData())))
+					return;
+				break;
+			case BLOCK_PLACE:
+				String txt = null;
+				if (entry.getSqlData().indexOf("-") == -1)
+					txt = BlockUtil.getBlockStringName(entry.getSqlData());
+				else
+					txt = BlockUtil
+							.getBlockStringName(entry.getSqlData().substring(entry.getSqlData().indexOf("-") + 1));
+				if (Config.BlockFilter.contains(txt))
+					return;
 		}
 
-		//Check world ignore list
-		if (Config.IgnoreWorlds.contains(entry.getWorld())) return;
+		// Check world ignore list
+		if (Config.IgnoreWorlds.contains(entry.getWorld()))
+			return;
 
 		queue.add(entry);
 	}
 
 	/**
 	 * Retrieves an entry from the database
+	 * 
 	 * @param id id of entry to return
 	 * @return
 	 */
@@ -113,7 +122,8 @@ public class DataManager extends TimerTask {
 		JDCConnection conn = null;
 		try {
 			conn = getConnection();
-			ResultSet res = conn.createStatement().executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id);
+			ResultSet res = conn.createStatement()
+					.executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id);
 			res.next();
 			return createEntryFromRes(res);
 		} catch (Exception ex) {
@@ -126,12 +136,14 @@ public class DataManager extends TimerTask {
 
 	/**
 	 * Deletes an entry from the database
+	 * 
 	 * @param dataid id to delete
 	 */
 	public static void deleteEntry(int dataid) {
 		Thread thread = new Thread(new DeleteEntry(dataid));
 		thread.start();
 	}
+
 	public static void deleteEntries(List<?> entries) {
 		Thread thread = new Thread(new DeleteEntry(entries));
 		thread.start();
@@ -139,6 +151,7 @@ public class DataManager extends TimerTask {
 
 	/**
 	 * Get a players name from the database player list
+	 * 
 	 * @param id
 	 * @return player name
 	 */
@@ -146,11 +159,12 @@ public class DataManager extends TimerTask {
 		for (Entry<String, Integer> entry : dbPlayers.entrySet())
 			if (entry.getValue() == id)
 				return entry.getKey();
-				return null;
+		return null;
 	}
 
 	/**
 	 * Get a world name from the database world list
+	 * 
 	 * @param id
 	 * @return world name
 	 */
@@ -158,11 +172,12 @@ public class DataManager extends TimerTask {
 		for (Entry<String, Integer> entry : dbWorlds.entrySet())
 			if (entry.getValue() == id)
 				return entry.getKey();
-				return null;
+		return null;
 	}
 
 	/**
 	 * Returns a database connection from the pool
+	 * 
 	 * @return {JDCConnection}
 	 */
 	public static JDCConnection getConnection() {
@@ -176,13 +191,14 @@ public class DataManager extends TimerTask {
 
 	/**
 	 * Creates a {@link DataEntry} from the inputted {ResultSet}
+	 * 
 	 * @param res
 	 * @return returns a {@link DataEntry}
 	 * @throws SQLException
 	 */
 	public static DataEntry createEntryFromRes(ResultSet res) throws Exception {
 		DataType type = DataType.fromId(res.getInt("action"));
-		DataEntry entry = (DataEntry)type.getEntryClass().newInstance();
+		DataEntry entry = (DataEntry) type.getEntryClass().newInstance();
 		entry.setPlayer(DataManager.getPlayer(res.getInt("player_id")));
 		entry.setDate(res.getString("date"));
 		entry.setDataId(res.getInt("data_id"));
@@ -204,7 +220,8 @@ public class DataManager extends TimerTask {
 		try {
 			Util.debug("Attempting to add player '" + name + "' to database");
 			conn = getConnection();
-			conn.createStatement().execute("INSERT IGNORE INTO `" + Config.DbPlayerTable + "` (player) VALUES ('" + name + "');");
+			conn.createStatement()
+					.execute("INSERT IGNORE INTO `" + Config.DbPlayerTable + "` (player) VALUES ('" + name + "');");
 		} catch (SQLException ex) {
 			Util.severe("Unable to add player to database: " + ex);
 			return false;
@@ -224,7 +241,8 @@ public class DataManager extends TimerTask {
 		try {
 			Util.debug("Attempting to add world '" + name + "' to database");
 			conn = getConnection();
-			conn.createStatement().execute("INSERT IGNORE INTO `" + Config.DbWorldTable + "` (world) VALUES ('" + name + "');");
+			conn.createStatement()
+					.execute("INSERT IGNORE INTO `" + Config.DbWorldTable + "` (world) VALUES ('" + name + "');");
 		} catch (SQLException ex) {
 			Util.severe("Unable to add world to database: " + ex);
 			return false;
@@ -238,6 +256,7 @@ public class DataManager extends TimerTask {
 
 	/**
 	 * Updates world and player local lists
+	 * 
 	 * @return true on success, false on failure
 	 */
 	private boolean updateDbLists() {
@@ -270,6 +289,7 @@ public class DataManager extends TimerTask {
 
 	/**
 	 * Checks that all tables are up to date and exist
+	 * 
 	 * @return true on success, false on failure
 	 */
 	private boolean checkTables() {
@@ -281,18 +301,21 @@ public class DataManager extends TimerTask {
 			stmnt = conn.createStatement();
 			DatabaseMetaData dbm = conn.getMetaData();
 
-			//Check if tables exist
+			// Check if tables exist
 			if (!JDBCUtil.tableExists(dbm, Config.DbPlayerTable)) {
 				Util.info("Table `" + Config.DbPlayerTable + "` not found, creating...");
-				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbPlayerTable + "` (`player_id` int(11) NOT NULL AUTO_INCREMENT, `player` varchar(255) NOT NULL, PRIMARY KEY (`player_id`), UNIQUE KEY `player` (`player`) );");
+				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbPlayerTable
+						+ "` (`player_id` int(11) NOT NULL AUTO_INCREMENT, `player` varchar(255) NOT NULL, PRIMARY KEY (`player_id`), UNIQUE KEY `player` (`player`) );");
 			}
 			if (!JDBCUtil.tableExists(dbm, Config.DbWorldTable)) {
 				Util.info("Table `" + Config.DbWorldTable + "` not found, creating...");
-				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbWorldTable + "` (`world_id` int(11) NOT NULL AUTO_INCREMENT, `world` varchar(255) NOT NULL, PRIMARY KEY (`world_id`), UNIQUE KEY `world` (`world`) );");
+				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbWorldTable
+						+ "` (`world_id` int(11) NOT NULL AUTO_INCREMENT, `world` varchar(255) NOT NULL, PRIMARY KEY (`world_id`), UNIQUE KEY `world` (`world`) );");
 			}
 			if (!JDBCUtil.tableExists(dbm, Config.DbHawkEyeTable)) {
 				Util.info("Table `" + Config.DbHawkEyeTable + "` not found, creating...");
-				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbHawkEyeTable + "` (`data_id` int(11) NOT NULL AUTO_INCREMENT, `date` varchar(255) NOT NULL, `player_id` int(11) NOT NULL, `action` int(11) NOT NULL, `world_id` varchar(255) NOT NULL, `x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, `data` varchar(500) DEFAULT NULL, `plugin` varchar(255) DEFAULT 'HawkEye', PRIMARY KEY (`data_id`), KEY `player_action_world` (`player_id`,`action`,`world_id`), KEY `x_y_z` (`x`,`y`,`z` ));");
+				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbHawkEyeTable
+						+ "` (`data_id` int(11) NOT NULL AUTO_INCREMENT, `date` varchar(255) NOT NULL, `player_id` int(11) NOT NULL, `action` int(11) NOT NULL, `world_id` varchar(255) NOT NULL, `x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, `data` varchar(500) DEFAULT NULL, `plugin` varchar(255) DEFAULT 'HawkEye', PRIMARY KEY (`data_id`), KEY `player_action_world` (`player_id`,`action`,`world_id`), KEY `x_y_z` (`x`,`y`,`z` ));");
 			}
 
 		} catch (SQLException ex) {
@@ -326,7 +349,7 @@ public class DataManager extends TimerTask {
 
 				DataEntry entry = queue.poll();
 
-				//Sort out player IDs
+				// Sort out player IDs
 				if (!dbPlayers.containsKey(entry.getPlayer()) && !addPlayer(entry.getPlayer())) {
 					Util.debug("Player '" + entry.getPlayer() + "' not found, skipping entry");
 					continue;
@@ -336,19 +359,20 @@ public class DataManager extends TimerTask {
 					continue;
 				}
 
-				//If player ID is unable to be found, continue
+				// If player ID is unable to be found, continue
 				if (entry.getPlayer() == null || dbPlayers.get(entry.getPlayer()) == null) {
 					Util.debug("No player found, skipping entry");
 					continue;
 				}
 
-				//If we are re-inserting we need to also insert the data ID
+				// If we are re-inserting we need to also insert the data ID
 				if (entry.getDataId() > 0) {
-					stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable + "` (date, player_id, action, world_id, x, y, z, data, plugin, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+					stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable
+							+ "` (date, player_id, action, world_id, x, y, z, data, plugin, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 					stmnt.setInt(10, entry.getDataId());
-				}
-				else
-					stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable + "` (date, player_id, action, world_id, x, y, z, data, plugin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+				} else
+					stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable
+							+ "` (date, player_id, action, world_id, x, y, z, data, plugin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
 				stmnt.setString(1, entry.getDate());
 				stmnt.setInt(2, dbPlayers.get(entry.getPlayer()));
 				stmnt.setInt(3, entry.getType().getId());

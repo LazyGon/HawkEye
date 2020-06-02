@@ -6,6 +6,7 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 /**
  * Enables or disables search tool for players
+ * 
  * @author oliverw92
  */
 public class ToolCommand extends BaseCommand {
@@ -19,11 +20,11 @@ public class ToolCommand extends BaseCommand {
 	@Override
 	public boolean execute() {
 
-		//If not using tool, enable
+		// If not using tool, enable
 		if (!session.isUsingTool())
 			ToolManager.enableTool(session, player);
 
-		//If using tool, disable
+		// If using tool, disable
 		else
 			ToolManager.disableTool(session, player);
 

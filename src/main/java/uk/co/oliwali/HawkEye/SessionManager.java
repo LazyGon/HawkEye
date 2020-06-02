@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 /**
  * Class for parsing managing player's {@PlayerSession}s
+ * 
  * @author oliverw92
  */
 public class SessionManager {
@@ -16,11 +17,12 @@ public class SessionManager {
 
 	public SessionManager() {
 
-		//Add console session
+		// Add console session
 		addSession(Bukkit.getServer().getConsoleSender());
 
-        //Create player sessions
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) addSession(player);
+		// Create player sessions
+		for (Player player : Bukkit.getServer().getOnlinePlayers())
+			addSession(player);
 
 	}
 
@@ -43,8 +45,7 @@ public class SessionManager {
 		if (playerSessions.containsKey(player.getName())) {
 			session = playerSessions.get(player.getName());
 			session.setSender(player);
-		}
-		else {
+		} else {
 			session = new PlayerSession(player);
 			playerSessions.put(player.getName(), session);
 		}

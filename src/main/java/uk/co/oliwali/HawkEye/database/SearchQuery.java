@@ -18,8 +18,9 @@ import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
- * Threadable class for performing a search query
- * Used for in-game searches and rollbacks
+ * Threadable class for performing a search query Used for in-game searches and
+ * rollbacks
+ * 
  * @author oliverw92
  */
 public class SearchQuery extends Thread {
@@ -35,7 +36,7 @@ public class SearchQuery extends Thread {
 		this.dir = dir;
 		this.delete = (callBack instanceof DeleteCallback);
 
-		//Start thread
+		// Start thread
 		this.start();
 	}
 
@@ -57,7 +58,7 @@ public class SearchQuery extends Thread {
 		List<String> args = new LinkedList<String>();
 		List<Object> binds = new LinkedList<Object>();
 
-		//Match players from database list
+		// Match players from database list
 		Util.debug("Building players");
 		if (parser.players.size() >= 1) {
 			List<Integer> pids = new ArrayList<Integer>();
@@ -70,10 +71,10 @@ public class SearchQuery extends Thread {
 						npids.add(entry.getValue());
 				}
 			}
-			//Include players
+			// Include players
 			if (pids.size() > 0)
 				args.add("player_id IN (" + Util.join(pids, ",") + ")");
-			//Exclude players
+			// Exclude players
 			if (npids.size() > 0)
 				args.add("player_id NOT IN (" + Util.join(npids, ",") + ")");
 			if (npids.size() + pids.size() < 1) {
@@ -82,7 +83,7 @@ public class SearchQuery extends Thread {
 			}
 		}
 
-		//Match worlds from database list
+		// Match worlds from database list
 		Util.debug("Building worlds");
 		if (parser.worlds != null) {
 			List<Integer> wids = new ArrayList<Integer>();
@@ -95,10 +96,10 @@ public class SearchQuery extends Thread {
 						nwids.add(entry.getValue());
 				}
 			}
-			//Include worlds
+			// Include worlds
 			if (wids.size() > 0)
 				args.add("world_id IN (" + Util.join(wids, ",") + ")");
-			//Exclude worlds
+			// Exclude worlds
 			if (nwids.size() > 0)
 				args.add("world_id NOT IN (" + Util.join(nwids, ",") + ")");
 			if (nwids.size() + wids.size() < 1) {
@@ -107,16 +108,16 @@ public class SearchQuery extends Thread {
 			}
 		}
 
-		//Compile actions into SQL form
+		// Compile actions into SQL form
 		Util.debug("Building actions");
 		if (parser.actions != null && parser.actions.size() > 0) {
 			List<Integer> acs = new ArrayList<Integer>();
 			for (DataType act : parser.actions)
 				acs.add(act.getId());
-					args.add("action IN (" + Util.join(acs, ",") + ")");
+			args.add("action IN (" + Util.join(acs, ",") + ")");
 		}
 
-		//Add dates
+		// Add dates
 		Util.debug("Building dates");
 		if (parser.dateFrom != null) {
 			args.add("date >= ?");
@@ -127,20 +128,19 @@ public class SearchQuery extends Thread {
 			binds.add(parser.dateTo);
 		}
 
-		//Check if location is exact or a range
+		// Check if location is exact or a range
 		Util.debug("Building location");
 		if (parser.minLoc != null) {
 			args.add("(x BETWEEN " + parser.minLoc.getX() + " AND " + parser.maxLoc.getX() + ")");
 			args.add("(y BETWEEN " + parser.minLoc.getY() + " AND " + parser.maxLoc.getY() + ")");
 			args.add("(z BETWEEN " + parser.minLoc.getZ() + " AND " + parser.maxLoc.getZ() + ")");
-		}
-		else if (parser.loc != null) {
+		} else if (parser.loc != null) {
 			args.add("x = " + parser.loc.getX());
 			args.add("y = " + parser.loc.getY());
 			args.add("z = " + parser.loc.getZ());
 		}
 
-		//Build the filters into SQL form
+		// Build the filters into SQL form
 		Util.debug("Building filters");
 		if (parser.filters != null) {
 			for (String filter : parser.filters) {
@@ -149,21 +149,21 @@ public class SearchQuery extends Thread {
 			}
 		}
 
-		//Build WHERE clause
+		// Build WHERE clause
 		sql += Util.join(args, " AND ");
 
-		//Add order by
+		// Add order by
 		Util.debug("Ordering by data_id");
 		sql += " ORDER BY `data_id` DESC";
 
-		//Check the limits
+		// Check the limits
 		Util.debug("Building limits");
 		if (Config.MaxLines > 0)
 			sql += " LIMIT " + Config.MaxLines;
 
-		//Util.debug("Searching: " + sql);
+		// Util.debug("Searching: " + sql);
 
-		//Set up some stuff for the search
+		// Set up some stuff for the search
 		ResultSet res;
 		List<DataEntry> results = new ArrayList<DataEntry>();
 		JDCConnection conn = DataManager.getConnection();
@@ -172,7 +172,7 @@ public class SearchQuery extends Thread {
 
 		try {
 
-			//Execute query
+			// Execute query
 			stmnt = conn.prepareStatement(sql);
 
 			Util.debug("Preparing statement");
@@ -189,11 +189,11 @@ public class SearchQuery extends Thread {
 
 				Util.debug("Getting results");
 
-				//Retrieve results
+				// Retrieve results
 				while (res.next())
 					results.add(DataManager.createEntryFromRes(res));
 
-				//If ascending, reverse results
+				// If ascending, reverse results
 				if (dir == SearchDir.ASC)
 					Collections.reverse(results);
 			}
@@ -216,7 +216,7 @@ public class SearchQuery extends Thread {
 
 		Util.debug(results.size() + " results found");
 
-		//Run callback
+		// Run callback
 		if (delete)
 			((DeleteCallback) callBack).deleted = deleted;
 		else
@@ -230,20 +230,18 @@ public class SearchQuery extends Thread {
 
 	/**
 	 * Enumeration for result sorting directions
+	 * 
 	 * @author oliverw92
 	 */
 	public enum SearchDir {
-		ASC,
-		DESC
+		ASC, DESC
 	}
 
 	/**
 	 * Enumeration for query errors
 	 */
 	public enum SearchError {
-		NO_PLAYERS,
-		NO_WORLDS,
-		MYSQL_ERROR
+		NO_PLAYERS, NO_WORLDS, MYSQL_ERROR
 	}
 
 }

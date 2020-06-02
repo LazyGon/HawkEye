@@ -12,29 +12,26 @@ import uk.co.oliwali.HawkEye.entry.SignEntry;
 import uk.co.oliwali.HawkEye.entry.SimpleRollbackEntry;
 
 /**
- * Enumeration class representing all the different actions that HawkEye can handle
+ * Enumeration class representing all the different actions that HawkEye can
+ * handle
+ * 
  * @author oliverw92
  */
 public enum DataType {
 
 	BLOCK_BREAK(0, BlockEntry.class, "block-break", true, true),
 	BLOCK_PLACE(1, BlockChangeEntry.class, "block-place", true, true),
-	SIGN_PLACE(2, SignEntry.class, "sign-place", true, true),
-	CHAT(3, DataEntry.class, "chat", false, false),
-	COMMAND(4, DataEntry.class, "command", false, false),
-	JOIN(5, DataEntry.class, "join", false, false),
-	QUIT(6, DataEntry.class, "quit", false, false),
-	TELEPORT(7, DataEntry.class, "teleport", false, false),
+	SIGN_PLACE(2, SignEntry.class, "sign-place", true, true), CHAT(3, DataEntry.class, "chat", false, false),
+	COMMAND(4, DataEntry.class, "command", false, false), JOIN(5, DataEntry.class, "join", false, false),
+	QUIT(6, DataEntry.class, "quit", false, false), TELEPORT(7, DataEntry.class, "teleport", false, false),
 	LAVA_BUCKET(8, SimpleRollbackEntry.class, "lava-bucket", true, true),
 	WATER_BUCKET(9, SimpleRollbackEntry.class, "water-bucket", true, true),
 	OPEN_CONTAINER(10, DataEntry.class, "open-container", true, false),
 	DOOR_INTERACT(11, DataEntry.class, "door-interact", true, false),
 	PVP_DEATH(12, DataEntry.class, "pvp-death", false, false),
 	FLINT_AND_STEEL(13, SimpleRollbackEntry.class, "flint-steel", true, true),
-	LEVER(14, DataEntry.class, "lever", true, false),
-	STONE_BUTTON(15, DataEntry.class, "button", true, false),
-	OTHER(16, DataEntry.class, "other", false, false),
-	EXPLOSION(17, BlockEntry.class, "explosion", true, true),
+	LEVER(14, DataEntry.class, "lever", true, false), STONE_BUTTON(15, DataEntry.class, "button", true, false),
+	OTHER(16, DataEntry.class, "other", false, false), EXPLOSION(17, BlockEntry.class, "explosion", true, true),
 	BLOCK_BURN(18, BlockEntry.class, "block-burn", true, true),
 	BLOCK_FORM(19, BlockChangeEntry.class, "block-form", true, true),
 	LEAF_DECAY(20, BlockEntry.class, "leaf-decay", true, true),
@@ -51,8 +48,8 @@ public enum DataType {
 	PAINTING_PLACE(31, DataEntry.class, "painting-place", true, false),
 	ENDERMAN_PICKUP(32, BlockEntry.class, "enderman-pickup", true, true),
 	ENDERMAN_PLACE(33, BlockChangeEntry.class, "enderman-place", true, true),
-    TREE_GROW(34, BlockChangeEntry.class, "tree-grow", true, true),
-    MUSHROOM_GROW(35, BlockChangeEntry.class, "mushroom-grow", true, true),
+	TREE_GROW(34, BlockChangeEntry.class, "tree-grow", true, true),
+	MUSHROOM_GROW(35, BlockChangeEntry.class, "mushroom-grow", true, true),
 	ENTITY_KILL(36, DataEntry.class, "entity-kill", false, false);
 
 	private int id;
@@ -65,7 +62,7 @@ public enum DataType {
 	private static final Map<Integer, DataType> idMapping = new HashMap<Integer, DataType>();
 
 	static {
-		//Mapping to enable quick finding of DataTypes by name or id
+		// Mapping to enable quick finding of DataTypes by name or id
 		for (DataType type : EnumSet.allOf(DataType.class)) {
 			nameMapping.put(type.configName, type);
 		}
@@ -84,6 +81,7 @@ public enum DataType {
 
 	/**
 	 * Get the id of the DataType
+	 * 
 	 * @return int id of the DataType
 	 */
 	public int getId() {
@@ -92,6 +90,7 @@ public enum DataType {
 
 	/**
 	 * Get the config name of the DataType
+	 * 
 	 * @return String config name
 	 */
 	public String getConfigName() {
@@ -100,6 +99,7 @@ public enum DataType {
 
 	/**
 	 * Get the class to be used for DataEntry
+	 * 
 	 * @return String name of entry class
 	 */
 	public Class<?> getEntryClass() {
@@ -108,6 +108,7 @@ public enum DataType {
 
 	/**
 	 * Get a matching DataType from the supplied config name
+	 * 
 	 * @param name DataType config name to search for
 	 * @return {@link DataType}
 	 */
@@ -116,7 +117,8 @@ public enum DataType {
 	}
 
 	/**
-	 * Get a matching DataType from the supplied  id
+	 * Get a matching DataType from the supplied id
+	 * 
 	 * @param id DataType id to search for
 	 * @return {@link DataType}
 	 */
@@ -126,6 +128,7 @@ public enum DataType {
 
 	/**
 	 * Check if the DataType can be rolled back
+	 * 
 	 * @return true if it can be, false if not
 	 */
 	public boolean canRollback() {
@@ -134,6 +137,7 @@ public enum DataType {
 
 	/**
 	 * Check if the DataType can be used in 'here' searches
+	 * 
 	 * @return true if it can be, false if not
 	 */
 	public boolean canHere() {

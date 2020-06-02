@@ -16,6 +16,7 @@ import uk.co.oliwali.HawkEye.util.Config;
 
 /**
  * Block listener class for HawkEye Tools
+ * 
  * @author oliverw92
  */
 public class ToolListener implements Listener {
@@ -23,8 +24,9 @@ public class ToolListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		Block block   = event.getBlock();
-		if (BlockUtil.getBlockString(block).equals(Config.ToolBlock) && SessionManager.getSession(player).isUsingTool()) {
+		Block block = event.getBlock();
+		if (BlockUtil.getBlockString(block).equals(Config.ToolBlock)
+				&& SessionManager.getSession(player).isUsingTool()) {
 			ToolManager.toolSearch(player, block.getLocation());
 			event.setCancelled(true);
 		}
@@ -33,7 +35,9 @@ public class ToolListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (event.getAction() == Action.LEFT_CLICK_BLOCK && BlockUtil.getItemString(player.getItemInHand()).equals(Config.ToolBlock) && SessionManager.getSession(player).isUsingTool()) {
+		if (event.getAction() == Action.LEFT_CLICK_BLOCK
+				&& BlockUtil.getItemString(player.getItemInHand()).equals(Config.ToolBlock)
+				&& SessionManager.getSession(player).isUsingTool()) {
 			ToolManager.toolSearch(player, event.getClickedBlock().getLocation());
 			event.setCancelled(true);
 		}

@@ -13,8 +13,9 @@ import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
- * Runnable class for reversing a {@link Rollback}.
- * This class should always be run in a separate thread to avoid impacting on server performance
+ * Runnable class for reversing a {@link Rollback}. This class should always be
+ * run in a separate thread to avoid impacting on server performance
+ * 
  * @author oliverw92
  */
 public class Undo implements Runnable {
@@ -34,13 +35,14 @@ public class Undo implements Runnable {
 		this.session = session;
 		undoQueue = session.getRollbackResults().iterator();
 
-		//Check if already rolling back
+		// Check if already rolling back
 		if (session.doingRollback()) {
-			Util.sendMessage(session.getSender(), "&cYour previous rollback is still processing, please wait before performing an undo!");
+			Util.sendMessage(session.getSender(),
+					"&cYour previous rollback is still processing, please wait before performing an undo!");
 			return;
 		}
 
-		//Check that we actually have results
+		// Check that we actually have results
 		if (!undoQueue.hasNext()) {
 			Util.sendMessage(session.getSender(), "&cNo results found to undo");
 			return;
@@ -48,38 +50,41 @@ public class Undo implements Runnable {
 
 		Util.debug("Starting undo of " + session.getRollbackResults().size() + " results");
 
-		//Start undo
+		// Start undo
 		session.setDoingRollback(true);
-		Util.sendMessage(session.getSender(), "&cAttempting to undo &7" + session.getRollbackResults().size() + "&c rollback edits");
-		timerID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Bukkit.getServer().getPluginManager().getPlugin("HawkEye"), this, 1, 2);
+		Util.sendMessage(session.getSender(),
+				"&cAttempting to undo &7" + session.getRollbackResults().size() + "&c rollback edits");
+		timerID = Bukkit.getServer().getScheduler()
+				.scheduleSyncRepeatingTask(Bukkit.getServer().getPluginManager().getPlugin("HawkEye"), this, 1, 2);
 
 	}
 
 	/**
-	 * Run the undo.
-	 * Contains appropriate methods of catching errors and notifying the player
+	 * Run the undo. Contains appropriate methods of catching errors and notifying
+	 * the player
 	 */
 	public void run() {
 
-		//Start rollback process
+		// Start rollback process
 		int i = 0;
 		while (i < 200 && undoQueue.hasNext()) {
 
-			//If undo doesn't exist
+			// If undo doesn't exist
 			DataEntry entry = undoQueue.next();
-			if (entry.getUndoState() == null) continue;
+			if (entry.getUndoState() == null)
+				continue;
 
-			//Global undo
+			// Global undo
 			if (undoType == RollbackType.GLOBAL) {
 				entry.getUndoState().update(true);
-				//Add back into database if delete data is on
+				// Add back into database if delete data is on
 				if (Config.DeleteDataOnRollback)
 					DataManager.addEntry(entry);
 			}
 
-			//Player undo
+			// Player undo
 			else {
-				Player player = (Player)session.getSender();
+				Player player = (Player) session.getSender();
 				Block block = entry.getUndoState().getBlock();
 				player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
 			}
@@ -88,10 +93,10 @@ public class Undo implements Runnable {
 
 		}
 
-		//Check if undo is finished
+		// Check if undo is finished
 		if (!undoQueue.hasNext()) {
 
-			//End timer
+			// End timer
 			Bukkit.getServer().getScheduler().cancelTask(timerID);
 
 			session.setDoingRollback(false);
@@ -101,7 +106,6 @@ public class Undo implements Runnable {
 			Util.debug("Undo complete, " + counter + " edits performed");
 
 		}
-
 
 	}
 

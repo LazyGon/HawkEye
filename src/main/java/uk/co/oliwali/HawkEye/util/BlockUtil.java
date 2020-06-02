@@ -8,19 +8,21 @@ import org.bukkit.material.MaterialData;
 
 /**
  * Contains utilities for manipulating blocks without losing data
+ * 
  * @author oliverw92
  */
 public class BlockUtil {
 
 	/**
-	 * Gets the block in 'string form'.
-	 * e.g. blockid:datavalue
+	 * Gets the block in 'string form'. e.g. blockid:datavalue
+	 * 
 	 * @param block BlockState of the block you wish to convert
 	 * @return string representing the block
 	 */
 	public static String getBlockString(Block block) {
 		return getBlockString(block.getState());
 	}
+
 	public static String getBlockString(BlockState block) {
 		if (block.getRawData() != 0)
 			return block.getTypeId() + ":" + block.getRawData();
@@ -29,6 +31,7 @@ public class BlockUtil {
 
 	/**
 	 * Same as getBlockString() except for ItemStack
+	 * 
 	 * @param stack ItemStack you wish to convert
 	 * @return string representing the item
 	 */
@@ -40,7 +43,8 @@ public class BlockUtil {
 
 	/**
 	 * Converts an item string into an ItemStack
-	 * @param item item string representing the material and data
+	 * 
+	 * @param item   item string representing the material and data
 	 * @param amount
 	 * @return an ItemStack
 	 */
@@ -54,25 +58,30 @@ public class BlockUtil {
 
 	/**
 	 * Returns the name of the block, with its data if applicable
+	 * 
 	 * @param blockData
 	 * @return
 	 */
 	public static String getBlockStringName(String blockData) {
 		String[] blockArr = blockData.split(":");
-		if (!Util.isInteger(blockArr[0])) return blockData;
+		if (!Util.isInteger(blockArr[0]))
+			return blockData;
 		if (blockArr.length > 1)
 			return Material.getMaterial(Integer.parseInt(blockArr[0])).name() + ":" + blockArr[1];
-		else return Material.getMaterial(Integer.parseInt(blockArr[0])).name();
+		else
+			return Material.getMaterial(Integer.parseInt(blockArr[0])).name();
 	}
 
 	/**
 	 * Sets the block type and data to the inputted block string
-	 * @param block Block to be changed
+	 * 
+	 * @param block     Block to be changed
 	 * @param blockData string form of a block
 	 */
 	public static void setBlockString(Block block, String blockData) {
 		String[] blockArr = blockData.split(":");
-		if (!Util.isInteger(blockArr[0])) return;
+		if (!Util.isInteger(blockArr[0]))
+			return;
 		block.setTypeId(Integer.parseInt(blockArr[0]));
 		if (blockArr.length > 1)
 			block.setData((byte) Integer.parseInt(blockArr[1]));
@@ -80,22 +89,26 @@ public class BlockUtil {
 
 	/**
 	 * Returns ID section of a block string
+	 * 
 	 * @param string
 	 * @return int ID
 	 */
 	public static int getIdFromString(String string) {
-		if (!Util.isInteger(string.split(":")[0])) return 0;
+		if (!Util.isInteger(string.split(":")[0]))
+			return 0;
 		return Integer.parseInt(string.split(":")[0]);
 	}
 
 	/**
 	 * Returns data section of a block string
+	 * 
 	 * @param string
 	 * @return int data
 	 */
 	public static byte getDataFromString(String string) {
-		if (string.split(":").length == 1) return 0;
-		return (byte)Integer.parseInt(string.split(":")[1]);
+		if (string.split(":").length == 1)
+			return 0;
+		return (byte) Integer.parseInt(string.split(":")[1]);
 	}
 
 }

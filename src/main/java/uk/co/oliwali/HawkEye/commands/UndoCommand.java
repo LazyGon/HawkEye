@@ -7,6 +7,7 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 /**
  * Reverses the previous {@link RollbackCommand}
+ * 
  * @author oliverw92
  */
 public class UndoCommand extends BaseCommand {

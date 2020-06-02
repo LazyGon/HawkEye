@@ -15,16 +15,19 @@ import uk.co.oliwali.HawkEye.util.InventoryUtil;
 
 /**
  * Represents a container transaction as created in {@MonitorInventoryListener}
+ * 
  * @author oliverw92
  */
 public class ContainerEntry extends DataEntry {
 
-	public ContainerEntry() { }
+	public ContainerEntry() {
+	}
 
 	public ContainerEntry(Player player, Location location, String diff) {
 		data = diff;
 		setInfo(player, DataType.CONTAINER_TRANSACTION, location);
 	}
+
 	public ContainerEntry(String player, Location location, String diff) {
 		data = diff;
 		setInfo(player, DataType.CONTAINER_TRANSACTION, location);
@@ -37,15 +40,16 @@ public class ContainerEntry extends DataEntry {
 
 	@Override
 	public boolean rollback(Block block) {
-		if (!(block instanceof InventoryHolder)) return false;
+		if (!(block instanceof InventoryHolder))
+			return false;
 		Inventory inv = ((InventoryHolder) block.getState()).getInventory();
-		List<HashMap<String,Integer>> ops = InventoryUtil.interpretDifferenceString(data);
-		//Handle the additions
+		List<HashMap<String, Integer>> ops = InventoryUtil.interpretDifferenceString(data);
+		// Handle the additions
 		if (ops.size() > 0) {
 			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(0)))
 				inv.removeItem(stack);
 		}
-		//Handle subtractions
+		// Handle subtractions
 		if (ops.size() > 1) {
 			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(1)))
 				inv.addItem(stack);
@@ -55,15 +59,16 @@ public class ContainerEntry extends DataEntry {
 
 	@Override
 	public boolean rebuild(Block block) {
-		if (!(block instanceof InventoryHolder)) return false;
+		if (!(block instanceof InventoryHolder))
+			return false;
 		Inventory inv = ((InventoryHolder) block.getState()).getInventory();
-		List<HashMap<String,Integer>> ops = InventoryUtil.interpretDifferenceString(data);
-		//Handle the additions
+		List<HashMap<String, Integer>> ops = InventoryUtil.interpretDifferenceString(data);
+		// Handle the additions
 		if (ops.size() > 0) {
 			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(0)))
 				inv.addItem(stack);
 		}
-		//Handle subtractions
+		// Handle subtractions
 		if (ops.size() > 1) {
 			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(1)))
 				inv.removeItem(stack);

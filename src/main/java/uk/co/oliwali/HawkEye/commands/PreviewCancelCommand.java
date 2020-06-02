@@ -6,8 +6,9 @@ import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 /**
- * Cancels a rollback preview.
- * Error handling for user input is done using exceptions to keep code neat.
+ * Cancels a rollback preview. Error handling for user input is done using
+ * exceptions to keep code neat.
+ * 
  * @author oliverw92
  */
 public class PreviewCancelCommand extends BaseCommand {
@@ -21,13 +22,13 @@ public class PreviewCancelCommand extends BaseCommand {
 	@Override
 	public boolean execute() {
 
-		//Check if player already has a rollback processing
+		// Check if player already has a rollback processing
 		if (!session.isInPreview()) {
 			Util.sendMessage(sender, "&cNo preview to cancel!");
 			return true;
 		}
 
-		//Undo local changes to the player
+		// Undo local changes to the player
 		new Undo(RollbackType.LOCAL, session);
 
 		Util.sendMessage(sender, "&cPreview rollback cancelled");

@@ -18,8 +18,7 @@ import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 
-public class JDCConnection implements Connection
-{
+public class JDCConnection implements Connection {
 	private final Connection conn;
 	private boolean inuse;
 	private long timestamp;
@@ -88,7 +87,8 @@ public class JDCConnection implements Connection
 	}
 
 	@Override
-	public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+	public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
+			throws SQLException {
 		return conn.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
 	}
 
@@ -178,7 +178,8 @@ public class JDCConnection implements Connection
 	}
 
 	@Override
-	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
+			int resultSetHoldability) throws SQLException {
 		return conn.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 	}
 
@@ -193,12 +194,14 @@ public class JDCConnection implements Connection
 	}
 
 	@Override
-	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
+			throws SQLException {
 		return conn.prepareStatement(sql, resultSetType, resultSetConcurrency);
 	}
 
 	@Override
-	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
+			int resultSetHoldability) throws SQLException {
 		return conn.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 	}
 
@@ -309,7 +312,8 @@ public class JDCConnection implements Connection
 	void terminate() {
 		try {
 			conn.close();
-		} catch (final SQLException ex) {}
+		} catch (final SQLException ex) {
+		}
 	}
 
 }

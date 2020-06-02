@@ -47,9 +47,9 @@ general:
     debug-level: low
     max-radius: 0
     give-user-tool: true
-    tool-block: '17'
+    tool-block: "17"
     default-here-radius: 5
-    default-tool-command: ''
+    default-tool-command: ""
     check-for-updates: true
     op-permissions: false
 mysql:
@@ -60,16 +60,16 @@ mysql:
     world-table: hawk_worlds
     hostname: localhost
     max-connections: 10
-    password: ''
+    password: ""
     database: minecraft
 ignore-worlds:
-- thisworldisignored
-- soisthisone
+    - thisworldisignored
+    - soisthisone
 version: 1.0.5b
 command-filter:
-- /login
-- /restartsrv
-- /register
+    - /login
+    - /restartsrv
+    - /register
 block-filter:
-- 140
-- 150
+    - 140
+    - 150

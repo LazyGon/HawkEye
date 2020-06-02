@@ -6,6 +6,7 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 /**
  * Displays a page from the player's previous search results
+ * 
  * @author oliverw92
  */
 public class PageCommand extends BaseCommand {

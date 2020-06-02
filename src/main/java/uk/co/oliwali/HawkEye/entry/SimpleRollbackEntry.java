@@ -9,16 +9,19 @@ import uk.co.oliwali.HawkEye.DataType;
 
 /**
  * Used for simple rollbacks - sets the block to air regardless of the data
+ * 
  * @author oliverw92
  */
 public class SimpleRollbackEntry extends DataEntry {
 
-	public SimpleRollbackEntry() { }
+	public SimpleRollbackEntry() {
+	}
 
 	public SimpleRollbackEntry(Player player, DataType type, Location loc, String data) {
 		setInfo(player, type, loc);
 		this.data = data;
 	}
+
 	public SimpleRollbackEntry(String player, DataType type, Location loc, String data) {
 		setInfo(player, type, loc);
 		this.data = data;
@@ -32,7 +35,7 @@ public class SimpleRollbackEntry extends DataEntry {
 
 	@Override
 	public boolean rollbackPlayer(Block block, Player player) {
-		player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
+		player.sendBlockChange(block.getLocation(), Material.AIR, (byte) 0);
 		return true;
 	}
 

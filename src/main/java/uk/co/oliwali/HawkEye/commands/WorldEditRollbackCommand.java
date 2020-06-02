@@ -19,8 +19,10 @@ import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.regions.Region;
 
 /**
- * Rolls back actions inside a WorldEdit selection according to the player's specified input.
- * Error handling for user input is done using exceptions to keep code neat.
+ * Rolls back actions inside a WorldEdit selection according to the player's
+ * specified input. Error handling for user input is done using exceptions to
+ * keep code neat.
+ * 
  * @author oliverw92
  */
 public class WorldEditRollbackCommand extends BaseCommand {
@@ -34,19 +36,19 @@ public class WorldEditRollbackCommand extends BaseCommand {
 	@Override
 	public boolean execute() {
 
-		//Check if player already has a rollback processing
+		// Check if player already has a rollback processing
 		if (session.doingRollback()) {
 			Util.sendMessage(sender, "&cYou already have a rollback command processing!");
 			return true;
 		}
 
-		//Check if WorldEdit is enabled
+		// Check if WorldEdit is enabled
 		if (HawkEye.worldEdit == null) {
 			Util.sendMessage(sender, "&7WorldEdit&c is not enabled, unable to perform rollbacks in selected region");
 			return true;
 		}
 
-		//Check if the WorldEdit selection is complete
+		// Check if the WorldEdit selection is complete
 		Region region = null;
 		try {
 			LocalPlayer lp = new BukkitPlayer(HawkEye.worldEdit, HawkEye.worldEdit.getWorldEdit().getServer(), player);
@@ -57,21 +59,24 @@ public class WorldEditRollbackCommand extends BaseCommand {
 			return true;
 		}
 
-		//Parse arguments
+		// Parse arguments
 		SearchParser parser = null;
 		try {
 
 			parser = new SearchParser(player, args);
 
-			//Check that supplied actions can rollback
+			// Check that supplied actions can rollback
 			if (parser.actions.size() > 0) {
 				for (DataType type : parser.actions)
-					if (!type.canRollback()) throw new IllegalArgumentException("You cannot rollback that action type: &7" + type.getConfigName());
+					if (!type.canRollback())
+						throw new IllegalArgumentException(
+								"You cannot rollback that action type: &7" + type.getConfigName());
 			}
-			//If none supplied, add in all rollback types
+			// If none supplied, add in all rollback types
 			else {
 				for (DataType type : DataType.values())
-					if (type.canRollback()) parser.actions.add(type);
+					if (type.canRollback())
+						parser.actions.add(type);
 			}
 
 		} catch (IllegalArgumentException e) {
@@ -79,11 +84,13 @@ public class WorldEditRollbackCommand extends BaseCommand {
 			return true;
 		}
 
-		//Set WorldEdit locations
-		parser.minLoc = new Vector(region.getMinimumPoint().getX(), region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
-		parser.maxLoc = new Vector(region.getMaximumPoint().getX(), region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
+		// Set WorldEdit locations
+		parser.minLoc = new Vector(region.getMinimumPoint().getX(), region.getMinimumPoint().getY(),
+				region.getMinimumPoint().getZ());
+		parser.maxLoc = new Vector(region.getMaximumPoint().getX(), region.getMaximumPoint().getY(),
+				region.getMaximumPoint().getZ());
 
-		//Create new SearchQuery with data
+		// Create new SearchQuery with data
 		new SearchQuery(new RollbackCallback(session, RollbackType.GLOBAL), parser, SearchDir.DESC);
 		return true;
 

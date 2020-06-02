@@ -11,6 +11,7 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 /**
  * Teleports player to location of specified data entry
+ * 
  * @author oliverw92
  */
 public class TptoCommand extends BaseCommand {
@@ -46,7 +47,8 @@ public class TptoCommand extends BaseCommand {
 	@Override
 	public void moreHelp() {
 		Util.sendMessage(sender, "&cTakes you to the location of the data entry with the specified ID");
-		Util.sendMessage(sender, "&cThe ID can be found in either the DataLog interface or when you do a search command");
+		Util.sendMessage(sender,
+				"&cThe ID can be found in either the DataLog interface or when you do a search command");
 	}
 
 	@Override
