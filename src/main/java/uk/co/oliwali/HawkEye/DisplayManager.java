@@ -35,16 +35,18 @@ public class DisplayManager {
 		// Work out max pages. Return if page is higher than max pages
 		int maxLines = 6;
 		int maxPages = (int) Math.ceil((double) results.size() / 6);
-		if (page > maxPages || page < 1)
+		if (page > maxPages || page < 1) {
 			return;
+		}
 
 		// Begin displaying page
 		Util.sendMessage(session.getSender(), "&8--------------------- &7Page (&c" + page + "&7/&c" + maxPages
 				+ "&7) &8--------------------" + (maxPages < 9 ? "-" : ""));
 
 		for (int i = (page - 1) * maxLines; i < ((page - 1) * maxLines) + maxLines; i++) {
-			if (i == results.size())
+			if (i == results.size()) {
 				break;
+			}
 			DataEntry entry = results.get(i);
 
 			sendLine(session.getSender(), "&cid:" + entry.getDataId() + " &7" + entry.getDate().substring(5) + " &c"
@@ -64,8 +66,9 @@ public class DisplayManager {
 	 */
 	public static void sendLine(CommandSender sender, String line) {
 		int len = 68;
-		if (line.length() < len)
+		if (line.length() < len) {
 			Util.sendMessage(sender, "&8| " + line);
+		}
 		else {
 			CustomColor lastColor = CustomColor.WHITE;
 			for (int i = 0; i < line.length(); i += len) {

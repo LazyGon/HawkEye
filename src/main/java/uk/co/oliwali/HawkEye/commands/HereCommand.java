@@ -30,33 +30,39 @@ public class HereCommand extends BaseCommand {
 		try {
 
 			// Check for valid integer
-			if (args.size() != 0 && !Util.isInteger(args.get(0)))
+			if (args.size() != 0 && !Util.isInteger(args.get(0))) {
 				throw new IllegalArgumentException("Invalid integer supplied for radius!");
-			int integer;
-			if (args.size() > 0)
-				integer = Integer.parseInt(args.get(0));
-			else
-				integer = Config.DefaultHereRadius;
-			if ((integer > Config.MaxRadius && Config.MaxRadius > 0) || integer < 0)
+			}
+
+			int integer = args.size() > 0 ? Integer.parseInt(args.get(0)) : Config.DefaultHereRadius;
+
+			if ((integer > Config.MaxRadius && Config.MaxRadius > 0) || integer < 0) {
 				throw new IllegalArgumentException("Invalid radius supplied supplied!");
+			}
 
 			// New search parser
 			parser = new SearchParser(player, integer);
 
 			// Add in DataTypes
-			for (DataType type : DataType.values())
-				if (type.canHere())
+			for (DataType type : DataType.values()) {
+				if (type.canHere()) {
 					parser.actions.add(type);
-
+				}
+			}
+				
 			// Check if players were supplied
-			if (args.size() > 1)
-				for (String p : args.get(1).split(","))
+			if (args.size() > 1) {
+				for (String p : args.get(1).split(",")) {
 					parser.players.add(p);
+				}
+			}
 
 			// Add in 'here' actions
-			for (DataType type : DataType.values())
-				if (type.canHere())
+			for (DataType type : DataType.values()) {
+				if (type.canHere()) {
 					parser.actions.add(type);
+				}
+			}
 
 		} catch (IllegalArgumentException e) {
 			Util.sendMessage(sender, "&c" + e.getMessage());

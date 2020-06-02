@@ -60,15 +60,18 @@ public class SearchParser {
 
 		for (int i = 0; i < args.size(); i++) {
 			String arg = args.get(i);
-			if (arg.isEmpty())
+			if (arg.isEmpty()) {
 				continue;
+			}
 
 			if (!paramSet) {
-				if (arg.length() < 2)
+				if (arg.length() < 2) {
 					throw new IllegalArgumentException("Invalid argument format: &7" + arg);
+				}
 				if (!arg.substring(1, 2).equals(":")) {
-					if (arg.contains(":"))
+					if (arg.contains(":")) {
 						throw new IllegalArgumentException("Invalid argument format: &7" + arg);
+					}
 
 					// No arg specified, treat as player
 					players.add(arg);
@@ -79,10 +82,11 @@ public class SearchParser {
 				paramSet = true;
 
 				if (arg.length() == 2) {
-					if (i == (args.size() - 1)) // No values specified
+					if (i == (args.size() - 1)) { // No values specified
 						throw new IllegalArgumentException("Invalid argument format: &7" + arg);
-					else // User put a space between the colon and value
+					} else { // User put a space between the colon and value
 						continue;
+					}
 				}
 
 				// Get values out of argument
@@ -96,55 +100,47 @@ public class SearchParser {
 
 				String[] values = arg.split(",");
 
-				// Players
-				if (lastParam.equals("p"))
-					for (String p : values)
+				if (lastParam.equals("p")) { // Players
+					for (String p : values) {
 						players.add(p);
-				// Worlds
-				else if (lastParam.equals("w"))
-					worlds = values;
-				// Filters
-				else if (lastParam.equals("f")) {
-					if (filters != null)
-						filters = Util.concat(filters, values);
-					else
-						filters = values;
-				}
-				// Blocks
-				else if (lastParam.equals("b")) {
-					for (int j = 0; j < values.length; j++) {
-						if (Material.getMaterial(values[j]) != null)
-							values[j] = Integer.toString(Material.getMaterial(values[j]).getId());
 					}
-				}
-				// Actions
-				else if (lastParam.equals("a")) {
+				} else if (lastParam.equals("w")) { // Worlds
+					worlds = values;
+				} else if (lastParam.equals("f")) { // Filters
+					filters = filters != null ? Util.concat(filters, values) : values;
+				} else if (lastParam.equals("b")) { // Blocks
+					for (int j = 0; j < values.length; j++) {
+						if (Material.getMaterial(values[j]) != null) {
+							values[j] = Integer.toString(Material.getMaterial(values[j]).getId());
+						}
+					}
+				} else if (lastParam.equals("a")) { // Actions
 					for (String value : values) {
 						DataType type = DataType.fromName(value);
-						if (type == null)
+						if (type == null) {
 							throw new IllegalArgumentException("Invalid action supplied: &7" + value);
-						if (!Permission.searchType(player, type.getConfigName()))
+						}
+						if (!Permission.searchType(player, type.getConfigName())) {
 							throw new IllegalArgumentException(
 									"You do not have permission to search for: &7" + type.getConfigName());
+						}
 						actions.add(type);
 					}
-				}
-				// Location
-				else if (lastParam.equals("l") && player instanceof Player) {
-					if (values[0].equalsIgnoreCase("here"))
+				} else if (lastParam.equals("l") && player instanceof Player) { // Location
+					if (values[0].equalsIgnoreCase("here")) {
 						loc = ((Player) player).getLocation().toVector();
-					else {
+					} else {
 						loc = new Vector();
 						loc.setX(Integer.parseInt(values[0]));
 						loc.setY(Integer.parseInt(values[1]));
 						loc.setZ(Integer.parseInt(values[2]));
 					}
-				}
-				// Radius
-				else if (lastParam.equals("r") && player instanceof Player) {
+				} else if (lastParam.equals("r") && player instanceof Player) { // Radius
 					if (!Util.isInteger(values[0])) {
-						if ((values[0].equalsIgnoreCase("we") || values[0].equalsIgnoreCase("worldedit"))
-								&& HawkEye.worldEdit != null) {
+						if (!(values[0].equalsIgnoreCase("we") || values[0].equalsIgnoreCase("worldedit"))
+								|| HawkEye.worldEdit == null) {
+							throw new IllegalArgumentException("Invalid radius supplied: &7" + values[0]);
+						}
 							try {
 								Region sel = HawkEye.worldEdit.getSessionManager()
 										.get(BukkitAdapter.adapt((Player) player))
@@ -167,26 +163,23 @@ public class SearchParser {
 							} catch (IncompleteRegionException e) {
 								throw new IllegalArgumentException("Selection is incomplete. Select pos1 and pos2.");
 							}
-						} else {
-							throw new IllegalArgumentException("Invalid radius supplied: &7" + values[0]);
-						}
 					} else {
 						radius = Integer.parseInt(values[0]);
 						if (Config.MaxRadius != 0 && radius > Config.MaxRadius)
 							throw new IllegalArgumentException("Radius too large, max allowed: &7" + Config.MaxRadius);
 					}
-				}
-				// Time
-				else if (lastParam.equals("t")) {
+				} else if (lastParam.equals("t")) { // Time
 
 					int type = 2;
 					for (int j = 0; j < arg.length(); j++) {
 						String c = arg.substring(j, j + 1);
 						if (!Util.isInteger(c)) {
-							if (c.equals("m") || c.equals("s") || c.equals("h") || c.equals("d") || c.equals("w"))
+							if (c.equals("m") || c.equals("s") || c.equals("h") || c.equals("d") || c.equals("w")) {
 								type = 0;
-							if (c.equals("-") || c.equals(":"))
+							}
+							if (c.equals("-") || c.equals(":")) {
 								type = 1;
+							}
 						}
 					}
 
@@ -207,18 +200,19 @@ public class SearchParser {
 								continue;
 							}
 							int num = Integer.parseInt(nums);
-							if (c.equals("w"))
+							if (c.equals("w")) {
 								weeks = num;
-							else if (c.equals("d"))
+							} else if (c.equals("d")) {
 								days = num;
-							else if (c.equals("h"))
+							} else if (c.equals("h")) {
 								hours = num;
-							else if (c.equals("m"))
+							} else if (c.equals("m")) {
 								mins = num;
-							else if (c.equals("s"))
+							} else if (c.equals("s")) {
 								secs = num;
-							else
+							} else {
 								throw new IllegalArgumentException("Invalid time measurement: &7" + c);
+							}
 							nums = "";
 						}
 
@@ -231,32 +225,33 @@ public class SearchParser {
 						SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 						dateFrom = form.format(cal.getTime());
 
-					}
-					// If the time is in the format 'yyyy-MM-dd HH:mm:ss'
-					else if (type == 1) {
+					} else if (type == 1) { // If the time is in the format 'yyyy-MM-dd HH:mm:ss'
 						if (values.length == 1) {
 							SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
 							dateFrom = form.format(Calendar.getInstance().getTime()) + " " + values[0];
 						}
-						if (values.length >= 2)
+						if (values.length >= 2) {
 							dateFrom = values[0] + " " + values[1];
-						if (values.length == 4)
+						}
+						if (values.length == 4) {
 							dateTo = values[2] + " " + values[3];
-					}
-					// Invalid time format
-					else if (type == 2)
+						}
+					} else if (type == 2) { // Invalid time format
 						throw new IllegalArgumentException("Invalid time format!");
+					}
 
-				} else
+				} else {
 					throw new IllegalArgumentException("Invalid parameter supplied: &7" + lastParam);
+				}
 
 				paramSet = false;
 			}
 		}
 
 		// Sort out locations
-		if (!worldedit)
+		if (!worldedit) {
 			parseLocations();
+		}
 	}
 
 	/**
@@ -264,28 +259,29 @@ public class SearchParser {
 	 */
 	public void parseLocations() {
 
-		if (!(player instanceof Player))
+		if (!(player instanceof Player)) {
 			return;
+		}
 
 		// Check if there is a max radius
-		if (radius == null && Config.MaxRadius != 0)
+		if (radius == null && Config.MaxRadius != 0) {
 			radius = Config.MaxRadius;
+		}
 
 		// If the radius is set we need to format the min and max locations
 		if (radius != null) {
 
 			// Check if location and world are supplied
-			if (loc == null)
+			if (loc == null) {
 				loc = ((Player) player).getLocation().toVector();
-			if (worlds == null)
+			}
+			if (worlds == null) {
 				worlds = new String[] { ((Player) player).getWorld().getName() };
+			}
 
 			// Format min and max
 			minLoc = new Vector(loc.getX() - radius, loc.getY() - radius, loc.getZ() - radius);
 			maxLoc = new Vector(loc.getX() + radius, loc.getY() + radius, loc.getZ() + radius);
-
 		}
-
 	}
-
 }

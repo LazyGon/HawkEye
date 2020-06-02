@@ -51,18 +51,19 @@ public class CleanseUtil extends TimerTask {
 				continue;
 			}
 			int num = Integer.parseInt(nums);
-			if (c.equals("w"))
+			if (c.equals("w")) {
 				temp += 604800 * num;
-			else if (c.equals("d"))
+			} else if (c.equals("d")) {
 				temp += 86400 * num;
-			else if (c.equals("h"))
+			} else if (c.equals("h")) {
 				temp += 3600 * num;
-			else if (c.equals("m"))
+			} else if (c.equals("m")) {
 				temp += 60 * num;
-			else if (c.equals("s"))
+			} else if (c.equals("s")) {
 				temp += num;
-			else
+			} else {
 				throw new Exception();
+			}
 			nums = "";
 		}
 		if (temp > 0)
@@ -124,18 +125,19 @@ public class CleanseUtil extends TimerTask {
 				continue;
 			}
 			int num = Integer.parseInt(nums);
-			if (c.equals("w"))
+			if (c.equals("w")) {
 				weeks = num;
-			else if (c.equals("d"))
+			} else if (c.equals("d")) {
 				days = num;
-			else if (c.equals("h"))
+			} else if (c.equals("h")) {
 				hours = num;
-			else if (c.equals("m"))
+			} else if (c.equals("m")) {
 				mins = num;
-			else if (c.equals("s"))
+			} else if (c.equals("s")) {
 				secs = num;
-			else
+			} else {
 				throw new Exception();
+			}
 			nums = "";
 		}
 

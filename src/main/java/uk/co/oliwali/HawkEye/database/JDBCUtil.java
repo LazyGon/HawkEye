@@ -70,17 +70,13 @@ abstract public class JDBCUtil {
      *
      * @param dbMetaData the database metadata to be used to look up this table
      * @param tableName  the case sensitive table name
-     *
-     * @throws SQLException if an exception is encountered while accessing the
-     *                      database
      */
-    public static boolean tableExistsCaseSensitive(DatabaseMetaData dbMetaData, String tableName) throws SQLException {
-        ResultSet rsTables = dbMetaData.getTables(null, null, tableName, null);
-        try {
-            boolean found = rsTables.next();
-            return found;
-        } finally {
-            closeJDBCResultSet(rsTables);
+    public static boolean tableExistsCaseSensitive(DatabaseMetaData dbMetaData, String tableName) {
+        try (ResultSet rsTables = dbMetaData.getTables(null, null, tableName, null)) {
+            return rsTables.next();
+        } catch (SQLException ex) {
+            Util.severe("Unable to close JDBCResulset: " + ex);
+            return false;
         }
     }
 
@@ -92,12 +88,8 @@ abstract public class JDBCUtil {
      * @param dbMetaData the database metadata to be used to look up this column
      * @param tableName  the table name
      * @param columnName the column name
-     *
-     * @throws SQLException if an exception is encountered while accessing the
-     *                      database
      */
-    public static boolean columnExists(DatabaseMetaData dbMetaData, String tableName, String columnName)
-            throws SQLException {
+    public static boolean columnExists(DatabaseMetaData dbMetaData, String tableName, String columnName) {
         return (columnExistsCaseSensitive(dbMetaData, tableName, columnName)
                 || columnExistsCaseSensitive(dbMetaData, tableName, columnName.toUpperCase(Locale.US))
                 || columnExistsCaseSensitive(dbMetaData, tableName, columnName.toLowerCase(Locale.US))
@@ -120,34 +112,13 @@ abstract public class JDBCUtil {
      * @param dbMetaData the database metadata to be used to look up this column
      * @param tableName  the case sensitive table name
      * @param columnName the case sensitive column name
-     *
-     * @throws SQLException if an exception is encountered while accessing the
-     *                      database
      */
-    public static boolean columnExistsCaseSensitive(DatabaseMetaData dbMetaData, String tableName, String columnName)
-            throws SQLException {
-        ResultSet rsTables = dbMetaData.getColumns(null, null, tableName, columnName);
-        try {
-            boolean found = rsTables.next();
-            return found;
-        } finally {
-            closeJDBCResultSet(rsTables);
-        }
-    }
-
-    /**
-     * Closes database result set and logs if an error is encountered
-     *
-     * @param aResultSet the result set to be closed
-     */
-    public static void closeJDBCResultSet(ResultSet aResultSet) {
-        try {
-            if (aResultSet != null) {
-                aResultSet.close();
-            }
+    public static boolean columnExistsCaseSensitive(DatabaseMetaData dbMetaData, String tableName, String columnName) {
+        try (ResultSet rsTables = dbMetaData.getColumns(null, null, tableName, columnName)) {
+            return rsTables.next();
         } catch (SQLException ex) {
             Util.severe("Unable to close JDBCResulset: " + ex);
+            return false;
         }
     }
-
 }

@@ -70,13 +70,15 @@ public class Rollback implements Runnable {
 			DataEntry entry = rollbackQueue.next();
 
 			// If the action can't be rolled back, skip this entry
-			if (entry.getType() == null || !entry.getType().canRollback())
+			if (entry.getType() == null || !entry.getType().canRollback()) {
 				continue;
+			}
 
 			// If the world doesn't exist, skip this entry
 			World world = HawkEye.server.getWorld(entry.getWorld());
-			if (world == null)
+			if (world == null) {
 				continue;
+			}
 
 			// Get some data from the entry
 			Location loc = new Location(world, entry.getX(), entry.getY(), entry.getZ());
@@ -110,8 +112,9 @@ public class Rollback implements Runnable {
 				Util.sendMessage(session.getSender(), "&cRollback complete, &7" + undo.size() + "&c edits performed");
 				Util.sendMessage(session.getSender(), "&cUndo this rollback using &7/hawk undo");
 				// Delete data if told to
-				if (Config.DeleteDataOnRollback)
+				if (Config.DeleteDataOnRollback) {
 					DataManager.deleteEntries(undo);
+				}
 			} else {
 				Util.sendMessage(session.getSender(),
 						"&cRollback preview complete, &7" + undo.size() + "&c edits performed to you");

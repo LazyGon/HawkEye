@@ -36,7 +36,7 @@ public class ToolListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		if (event.getAction() == Action.LEFT_CLICK_BLOCK
-				&& BlockUtil.getItemString(player.getItemInHand()).equals(Config.ToolBlock)
+				&& BlockUtil.getItemString(player.getInventory().getItemInMainHand()).equals(Config.ToolBlock)
 				&& SessionManager.getSession(player).isUsingTool()) {
 			ToolManager.toolSearch(player, event.getClickedBlock().getLocation());
 			event.setCancelled(true);

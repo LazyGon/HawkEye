@@ -21,12 +21,11 @@ public class ToolCommand extends BaseCommand {
 	public boolean execute() {
 
 		// If not using tool, enable
-		if (!session.isUsingTool())
+		if (!session.isUsingTool()) {
 			ToolManager.enableTool(session, player);
-
-		// If using tool, disable
-		else
+		} else { // If using tool, disable
 			ToolManager.disableTool(session, player);
+		}
 
 		return true;
 	}

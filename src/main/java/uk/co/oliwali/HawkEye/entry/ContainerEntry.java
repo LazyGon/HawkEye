@@ -40,38 +40,46 @@ public class ContainerEntry extends DataEntry {
 
 	@Override
 	public boolean rollback(Block block) {
-		if (!(block instanceof InventoryHolder))
+		if (!(block instanceof InventoryHolder)) {
 			return false;
+		}
+
 		Inventory inv = ((InventoryHolder) block.getState()).getInventory();
 		List<HashMap<String, Integer>> ops = InventoryUtil.interpretDifferenceString(data);
 		// Handle the additions
 		if (ops.size() > 0) {
-			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(0)))
+			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(0))) {
 				inv.removeItem(stack);
+			}
 		}
 		// Handle subtractions
 		if (ops.size() > 1) {
-			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(1)))
+			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(1))) {
 				inv.addItem(stack);
+			}
 		}
 		return true;
 	}
 
 	@Override
 	public boolean rebuild(Block block) {
-		if (!(block instanceof InventoryHolder))
+		if (!(block instanceof InventoryHolder)) {
 			return false;
+		}
+
 		Inventory inv = ((InventoryHolder) block.getState()).getInventory();
 		List<HashMap<String, Integer>> ops = InventoryUtil.interpretDifferenceString(data);
 		// Handle the additions
 		if (ops.size() > 0) {
-			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(0)))
+			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(0))) {
 				inv.addItem(stack);
+			}
 		}
 		// Handle subtractions
 		if (ops.size() > 1) {
-			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(1)))
+			for (ItemStack stack : InventoryUtil.uncompressInventory(ops.get(1))) {
 				inv.removeItem(stack);
+			}
 		}
 		return true;
 	}

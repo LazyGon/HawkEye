@@ -47,7 +47,7 @@ general:
     debug-level: low
     max-radius: 0
     give-user-tool: true
-    tool-block: "17"
+    tool-block: "OAK_LOG"
     default-here-radius: 5
     default-tool-command: ""
     check-for-updates: true

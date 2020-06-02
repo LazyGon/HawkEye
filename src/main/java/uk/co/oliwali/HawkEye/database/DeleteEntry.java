@@ -22,25 +22,22 @@ public class DeleteEntry implements Runnable {
 
 	public DeleteEntry(List<?> entries) {
 		for (int i = 0; i < entries.size(); i++) {
-			if (entries.get(i) instanceof DataEntry)
+			if (entries.get(i) instanceof DataEntry) {
 				ids.add(((DataEntry) (entries.get(i))).getDataId());
-			else
+			} else {
 				ids.add((Integer) entries.get(i));
+			}
 		}
 	}
 
 	public void run() {
-		JDCConnection conn = null;
-		try {
-			conn = DataManager.getConnection();
+		try (JDCConnection conn = DataManager.getConnection()) {
 			for (Integer id : ids) {
 				conn.createStatement()
 						.executeUpdate("DELETE FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id);
 			}
 		} catch (SQLException ex) {
 			Util.severe("Unable to delete data entries from MySQL database: " + ex);
-		} finally {
-			conn.close();
 		}
 	}
 

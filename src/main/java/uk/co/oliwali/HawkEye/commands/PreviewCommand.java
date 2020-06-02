@@ -40,17 +40,19 @@ public class PreviewCommand extends BaseCommand {
 			parser.loc = null;
 
 			// Check that supplied actions can rollback
-			if (parser.actions.size() > 0) {
-				for (DataType type : parser.actions)
-					if (!type.canRollback())
+			if (!parser.actions.isEmpty()) {
+				for (DataType type : parser.actions) {
+					if (!type.canRollback()) {
 						throw new IllegalArgumentException(
 								"You cannot rollback that action type: &7" + type.getConfigName());
-			}
-			// If none supplied, add in all rollback types
-			else {
-				for (DataType type : DataType.values())
-					if (type.canRollback())
+					}
+				}
+			} else { // If none supplied, add in all rollback types
+				for (DataType type : DataType.values()) {
+					if (type.canRollback()) {
 						parser.actions.add(type);
+					}
+				}
 			}
 
 		} catch (IllegalArgumentException e) {

@@ -71,8 +71,9 @@ public class ConnectionManager implements Closeable {
 		for (int i = 0; i < connections.size(); i++) {
 			conn = connections.get(i);
 			if (conn.lease()) {
-				if (conn.isValid())
+				if (conn.isValid()) {
 					return conn;
+				}
 				Util.debug("Removing dead MySQL connection");
 				connections.remove(conn);
 				conn.terminate();

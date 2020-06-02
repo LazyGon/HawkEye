@@ -24,28 +24,28 @@ public class MonitorWorldListener extends HawkEyeListener {
 	public void onStructureGrow(StructureGrowEvent event) {
 		// Sort out structure type
 		DataType type = DataType.TREE_GROW;
-		if (event.getSpecies().name().toLowerCase().contains("mushroom"))
+		if (event.getSpecies().name().toLowerCase().contains("mushroom")) {
 			type = DataType.MUSHROOM_GROW;
+		}
 
 		// Loop through blocks
 		for (BlockState block : event.getBlocks()) {
 
 			// Don't log the bottom block
 			if (block.getType() == Material.MYCEL || block.getType() == Material.DIRT
-					|| block.getType() == Material.GRASS)
+					|| block.getType() == Material.GRASS) {
 				continue;
+			}
 
 			Location loc = new Location(event.getWorld(), block.getX(), block.getY(), block.getZ());
 			// If a player did it
 			if (event.getPlayer() != null) {
 				DataManager.addEntry(
 						new BlockChangeEntry(event.getPlayer(), type, loc, "0", BlockUtil.getBlockString(block)));
+				return;
 			}
 			// If the environment did it
-			else {
-				DataManager
-						.addEntry(new BlockChangeEntry("Environment", type, loc, "0", BlockUtil.getBlockString(block)));
-			}
+			DataManager.addEntry(new BlockChangeEntry("Environment", type, loc, "0", BlockUtil.getBlockString(block)));
 		}
 
 	}

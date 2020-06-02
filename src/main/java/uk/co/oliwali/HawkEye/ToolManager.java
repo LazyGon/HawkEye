@@ -38,10 +38,11 @@ public class ToolManager {
 		// If player doesn't have a tool, give them one if enabled in config
 		if (!inv.contains(stack) && Config.GiveTool) {
 			int first = inv.firstEmpty();
-			if (first == -1)
+			if (first == -1) {
 				player.getWorld().dropItem(player.getLocation(), stack);
-			else
+			} else {
 				inv.setItem(first, stack);
+			}
 		}
 
 		// If they aren't holding a tool, move the tool to their hand
@@ -49,10 +50,11 @@ public class ToolManager {
 		if (!BlockUtil.getItemString(player.getItemInHand()).equals(Config.ToolBlock) && first != -1) {
 			ItemStack back = player.getItemInHand().clone();
 			player.setItemInHand(inv.getItem(first));
-			if (back.getAmount() == 0)
+			if (back.getAmount() == 0) {
 				inv.clear(first);
-			else
+			} else {
 				inv.setItem(first, back);
+			}
 		}
 
 		Util.sendMessage(player, "&cHawkEye tool enabled! &7Left click a block or place the tool to get information");
@@ -84,12 +86,12 @@ public class ToolManager {
 		// If parameters aren't bound, do some default
 		if (session.getToolCommand().length == 0 || session.getToolCommand()[0] == "") {
 			parser = new SearchParser(player);
-			for (DataType type : DataType.values())
-				if (type.canHere())
+			for (DataType type : DataType.values()) {
+				if (type.canHere()) {
 					parser.actions.add(type);
-		}
-		// Else use the default ones
-		else {
+				}
+			}
+		} else { // Else use the default ones
 			parser = new SearchParser(player, Arrays.asList(session.getToolCommand()));
 		}
 
@@ -121,8 +123,9 @@ public class ToolManager {
 
 		Util.sendMessage(player, "&cParameters bound to tool: &7" + Util.join(args, " "));
 		session.setToolCommand(args.toArray(new String[0]));
-		if (!session.isUsingTool())
+		if (!session.isUsingTool()) {
 			enableTool(session, player);
+		}
 
 	}
 

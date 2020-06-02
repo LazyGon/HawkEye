@@ -33,20 +33,23 @@ public class ContainerAccessManager {
 		// Get access from list
 		ContainerAccess access = null;
 		for (ContainerAccess acc : accessList) {
-			if (acc.player == player)
+			if (acc.player == player) {
 				access = acc;
+			}
 		}
 
 		// If no access, return
-		if (access == null)
+		if (access == null) {
 			return;
+		}
 
 		// Get current inventory, create diff string and add the database
 		HashMap<String, Integer> after = InventoryUtil
 				.compressInventory(InventoryUtil.getContainerContents(access.container));
 		String diff = InventoryUtil.createDifferenceString(access.beforeInv, after);
-		if (diff.length() > 1)
+		if (diff.length() > 1) {
 			DataManager.addEntry(new ContainerEntry(player, access.loc, diff));
+		}
 		accessList.remove(access);
 
 	}
@@ -59,8 +62,9 @@ public class ContainerAccessManager {
 	 * @param block  container to store
 	 */
 	public void checkInventoryOpen(Player player, Block block) {
-		if (!(block.getState() instanceof InventoryHolder))
+		if (!(block.getState() instanceof InventoryHolder)) {
 			return;
+		}
 		InventoryHolder container = (InventoryHolder) block.getState();
 		accessList.add(new ContainerAccess(container, player,
 				InventoryUtil.compressInventory(InventoryUtil.getContainerContents(container)), block.getLocation()));

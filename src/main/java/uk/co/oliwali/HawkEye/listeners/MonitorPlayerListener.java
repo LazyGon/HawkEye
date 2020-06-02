@@ -48,8 +48,9 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		// Check for inventory close
 		HawkEye.containerManager.checkInventoryClose(player);
 		// Check command filter
-		if (Config.CommandFilter.contains(event.getMessage().split(" ")[0]))
+		if (Config.CommandFilter.contains(event.getMessage().split(" ")[0])) {
 			return;
+		}
 		DataManager.addEntry(new DataEntry(player, DataType.COMMAND, player.getLocation(), event.getMessage()));
 	}
 
@@ -73,7 +74,7 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		String ip = "";
 		try {
 			ip = player.getAddress().getAddress().getHostAddress().toString();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 
 		DataManager.addEntry(new DataEntry(player, DataType.QUIT, loc, Config.LogIpAddresses ? ip : ""));
@@ -85,9 +86,10 @@ public class MonitorPlayerListener extends HawkEyeListener {
 		HawkEye.containerManager.checkInventoryClose(event.getPlayer());
 		Location from = event.getFrom();
 		Location to = event.getTo();
-		if (Util.distance(from, to) > 5)
+		if (Util.distance(from, to) > 5) {
 			DataManager.addEntry(new DataEntry(event.getPlayer(), DataType.TELEPORT, from,
 					to.getWorld().getName() + ": " + to.getX() + ", " + to.getY() + ", " + to.getZ()));
+		}
 	}
 
 	/**

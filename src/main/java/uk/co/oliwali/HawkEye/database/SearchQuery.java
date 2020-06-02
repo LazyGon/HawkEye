@@ -47,14 +47,8 @@ public class SearchQuery extends Thread {
 	public void run() {
 
 		Util.debug("Beginning search query");
-		String sql;
-
-		if (delete)
-			sql = "DELETE FROM ";
-		else
-			sql = "SELECT * FROM ";
-
-		sql += "`" + Config.DbHawkEyeTable + "` WHERE ";
+		String sql = delete ? "DELETE FROM `" : "SELECT * FROM `"
+				+ Config.DbHawkEyeTable + "` WHERE ";
 		List<String> args = new LinkedList<String>();
 		List<Object> binds = new LinkedList<Object>();
 
@@ -65,18 +59,21 @@ public class SearchQuery extends Thread {
 			List<Integer> npids = new ArrayList<Integer>();
 			for (String player : parser.players) {
 				for (Map.Entry<String, Integer> entry : DataManager.dbPlayers.entrySet()) {
-					if (entry.getKey().toLowerCase().contains(player.toLowerCase()))
+					if (entry.getKey().toLowerCase().contains(player.toLowerCase())) {
 						pids.add(entry.getValue());
-					else if (entry.getKey().toLowerCase().contains(player.replace("!", "").toLowerCase()))
+					} else if (entry.getKey().toLowerCase().contains(player.replace("!", "").toLowerCase())) {
 						npids.add(entry.getValue());
+					}
 				}
 			}
 			// Include players
-			if (pids.size() > 0)
+			if (pids.size() > 0) {
 				args.add("player_id IN (" + Util.join(pids, ",") + ")");
+			}
 			// Exclude players
-			if (npids.size() > 0)
+			if (npids.size() > 0) {
 				args.add("player_id NOT IN (" + Util.join(npids, ",") + ")");
+			}
 			if (npids.size() + pids.size() < 1) {
 				callBack.error(SearchError.NO_PLAYERS, "No players found matching your specifications");
 				return;
@@ -90,18 +87,21 @@ public class SearchQuery extends Thread {
 			List<Integer> nwids = new ArrayList<Integer>();
 			for (String world : parser.worlds) {
 				for (Map.Entry<String, Integer> entry : DataManager.dbWorlds.entrySet()) {
-					if (entry.getKey().toLowerCase().contains(world.toLowerCase()))
+					if (entry.getKey().toLowerCase().contains(world.toLowerCase())) {
 						wids.add(entry.getValue());
-					else if (entry.getKey().toLowerCase().contains(world.replace("!", "").toLowerCase()))
+					} else if (entry.getKey().toLowerCase().contains(world.replace("!", "").toLowerCase())) {
 						nwids.add(entry.getValue());
+					}
 				}
 			}
 			// Include worlds
-			if (wids.size() > 0)
+			if (wids.size() > 0) {
 				args.add("world_id IN (" + Util.join(wids, ",") + ")");
+			}
 			// Exclude worlds
-			if (nwids.size() > 0)
+			if (nwids.size() > 0) {
 				args.add("world_id NOT IN (" + Util.join(nwids, ",") + ")");
+			}
 			if (nwids.size() + wids.size() < 1) {
 				callBack.error(SearchError.NO_WORLDS, "No worlds found matching your specifications");
 				return;
@@ -112,8 +112,9 @@ public class SearchQuery extends Thread {
 		Util.debug("Building actions");
 		if (parser.actions != null && parser.actions.size() > 0) {
 			List<Integer> acs = new ArrayList<Integer>();
-			for (DataType act : parser.actions)
+			for (DataType act : parser.actions) {
 				acs.add(act.getId());
+			}
 			args.add("action IN (" + Util.join(acs, ",") + ")");
 		}
 
@@ -158,74 +159,66 @@ public class SearchQuery extends Thread {
 
 		// Check the limits
 		Util.debug("Building limits");
-		if (Config.MaxLines > 0)
+		if (Config.MaxLines > 0) {
 			sql += " LIMIT " + Config.MaxLines;
+		}
 
 		// Util.debug("Searching: " + sql);
 
 		// Set up some stuff for the search
-		ResultSet res;
 		List<DataEntry> results = new ArrayList<DataEntry>();
-		JDCConnection conn = DataManager.getConnection();
-		PreparedStatement stmnt = null;
 		int deleted = 0;
-
-		try {
-
-			// Execute query
-			stmnt = conn.prepareStatement(sql);
+		
+		try (
+			JDCConnection conn = DataManager.getConnection();
+			PreparedStatement stmnt = conn.prepareStatement(sql);
+		) {
 
 			Util.debug("Preparing statement");
-			for (int i = 0; i < binds.size(); i++)
+			for (int i = 0; i < binds.size(); i++) {
 				stmnt.setObject(i + 1, binds.get(i));
+			}
 
 			Util.debug("Searching: " + stmnt.toString());
-
 			if (delete) {
 				Util.debug("Deleting entries");
 				deleted = stmnt.executeUpdate();
 			} else {
-				res = stmnt.executeQuery();
+				ResultSet res = stmnt.executeQuery();
 
 				Util.debug("Getting results");
 
 				// Retrieve results
-				while (res.next())
+				while (res.next()) {
 					results.add(DataManager.createEntryFromRes(res));
+				}
 
 				// If ascending, reverse results
-				if (dir == SearchDir.ASC)
+				if (dir == SearchDir.ASC) {
 					Collections.reverse(results);
+				}
+				res.close();
 			}
-		} catch (Exception ex) {
-			Util.severe("Error executing MySQL query: " + ex);
-			ex.printStackTrace();
-			callBack.error(SearchError.MYSQL_ERROR, "Error executing MySQL query: " + ex);
+			
+	    } catch (SQLException sqlEx) {
+			Util.severe("Error executing MySQL query: " + sqlEx);
+			sqlEx.printStackTrace();
+			callBack.error(SearchError.MYSQL_ERROR, "Error executing MySQL query: " + sqlEx);
 			return;
-		} finally {
-			try {
-				if (stmnt != null)
-					stmnt.close();
-				conn.close();
-			} catch (SQLException ex) {
-				Util.severe("Unable to close SQL connection: " + ex);
-				callBack.error(SearchError.MYSQL_ERROR, "Unable to close SQL connection: " + ex);
-			}
-
 		}
 
 		Util.debug(results.size() + " results found");
 
 		// Run callback
-		if (delete)
+		if (delete) {
 			((DeleteCallback) callBack).deleted = deleted;
-		else
+		} else {
 			callBack.results = results;
+		}
 
 		callBack.execute();
 
 		Util.debug("Search complete");
-
 	}
 
 	/**

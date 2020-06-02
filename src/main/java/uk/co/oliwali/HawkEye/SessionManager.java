@@ -21,8 +21,9 @@ public class SessionManager {
 		addSession(Bukkit.getServer().getConsoleSender());
 
 		// Create player sessions
-		for (Player player : Bukkit.getServer().getOnlinePlayers())
+		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			addSession(player);
+		}
 
 	}
 
@@ -31,8 +32,9 @@ public class SessionManager {
 	 */
 	public static PlayerSession getSession(CommandSender player) {
 		PlayerSession session = playerSessions.get(player.getName());
-		if (session == null)
+		if (session == null) {
 			session = addSession(player);
+		}
 		session.setSender(player);
 		return session;
 	}

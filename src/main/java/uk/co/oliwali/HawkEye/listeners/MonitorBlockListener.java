@@ -41,17 +41,19 @@ public class MonitorBlockListener extends HawkEyeListener {
 	@HawkEvent(dataType = DataType.BLOCK_BREAK)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Block block = event.getBlock();
-		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST)
+		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST) {
 			DataManager.addEntry(new SignEntry(event.getPlayer(), DataType.SIGN_BREAK, event.getBlock()));
-		else
+		} else {
 			DataManager.addEntry(new BlockEntry(event.getPlayer(), DataType.BLOCK_BREAK, block));
+		}
 	}
 
 	@HawkEvent(dataType = DataType.BLOCK_PLACE)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Block block = event.getBlock();
-		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST)
+		if (block.getType() == Material.WALL_SIGN || block.getType() == Material.SIGN_POST) {
 			return;
+		}
 		DataManager.addEntry(new BlockChangeEntry(event.getPlayer(), DataType.BLOCK_PLACE, block.getLocation(),
 				event.getBlockReplacedState(), block.getState()));
 	}
@@ -80,8 +82,7 @@ public class MonitorBlockListener extends HawkEyeListener {
 
 	@HawkEvent(dataType = DataType.LEAF_DECAY)
 	public void onLeavesDecay(LeavesDecayEvent event) {
-		DataManager.addEntry(
-				new SimpleRollbackEntry("Environment", DataType.LEAF_DECAY, event.getBlock().getLocation(), ""));
+		DataManager.addEntry(new SimpleRollbackEntry("Environment", DataType.LEAF_DECAY, event.getBlock().getLocation(), ""));
 	}
 
 	@HawkEvent(dataType = { DataType.LAVA_FLOW, DataType.WATER_FLOW })
@@ -90,8 +91,9 @@ public class MonitorBlockListener extends HawkEyeListener {
 				78, 93, 94);
 
 		// Only interested in liquids flowing
-		if (!event.getBlock().isLiquid())
+		if (!event.getBlock().isLiquid()) {
 			return;
+		}
 
 		Location loc = event.getToBlock().getLocation();
 		BlockState from = event.getBlock().getState();
@@ -114,11 +116,11 @@ public class MonitorBlockListener extends HawkEyeListener {
 				from.setData(data);
 			}
 			DataManager.addEntry(new BlockChangeEntry("Environment", DataType.LAVA_FLOW, loc, to, from));
-
+			return;
 		}
 
 		// Water
-		else if (from.getTypeId() == 8 || from.getTypeId() == 9) {
+		if (from.getTypeId() == 8 || from.getTypeId() == 9) {
 
 			// Normal block
 			if (fluidBlocks.contains(to.getTypeId())) {

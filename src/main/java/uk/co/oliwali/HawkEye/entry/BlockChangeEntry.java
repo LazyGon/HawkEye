@@ -48,8 +48,9 @@ public class BlockChangeEntry extends DataEntry {
 
 	@Override
 	public String getStringData() {
-		if (from == null)
+		if (from == null) {
 			return BlockUtil.getBlockStringName(to);
+		}
 		return BlockUtil.getBlockStringName(from) + " changed to " + BlockUtil.getBlockStringName(to);
 	}
 
@@ -60,30 +61,32 @@ public class BlockChangeEntry extends DataEntry {
 
 	@Override
 	public boolean rollback(Block block) {
-		if (from == null)
+		if (from == null) {
 			block.setType(Material.AIR);
-		else
+		} else {
 			BlockUtil.setBlockString(block, from);
+		}
 		return true;
 	}
 
 	@Override
 	public boolean rollbackPlayer(Block block, Player player) {
-		if (from == null)
+		if (from == null) {	
 			player.sendBlockChange(block.getLocation(), 0, (byte) 0);
-		else
+		} else {
 			player.sendBlockChange(block.getLocation(), BlockUtil.getIdFromString(from),
 					BlockUtil.getDataFromString(from));
+		}
 		return true;
 	}
 
 	@Override
 	public boolean rebuild(Block block) {
-		if (to == null)
-			return false;
-		else
+		if (to != null) {
 			BlockUtil.setBlockString(block, to);
-		return true;
+			return true;
+		}
+		return false;
 	}
 
 	@Override

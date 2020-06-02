@@ -23,12 +23,12 @@ public class HelpCommand extends BaseCommand {
 		if (args.size() == 0) {
 			Util.sendMessage(sender, "&c---------------------- &7HawkEye &c----------------------");
 			Util.sendMessage(sender, "&7Type &8/hawk help <command>&7 for more info on that command");
-			for (BaseCommand cmd : HawkEye.commands.toArray(new BaseCommand[0]))
-				if (cmd.permission())
+			for (BaseCommand cmd : HawkEye.commands.toArray(new BaseCommand[0])) {
+				if (cmd.permission()) {
 					Util.sendMessage(sender, "&8-&7 /" + usedCommand + " &c" + cmd.name + " &7" + cmd.usage);
-		}
-		// Command-specific help
-		else {
+				}
+			}
+		} else { // Command-specific help
 			for (BaseCommand cmd : HawkEye.commands.toArray(new BaseCommand[0])) {
 				if (cmd.permission() && cmd.name.equalsIgnoreCase(args.get(0))) {
 					Util.sendMessage(sender, "&c---------------------- &7HawkEye - " + cmd.name);

@@ -61,14 +61,15 @@ public class Util {
 	 * @param msg message to send
 	 */
 	public static void debug(String msg) {
-		if (Config.Debug)
+		if (Config.Debug) {
 			Util.debug(DebugLevel.LOW, msg);
+		}
 	}
 
 	public static void debug(DebugLevel level, String msg) {
-		if (Config.Debug)
-			if (Config.DebugLevel.compareTo(level) >= 0)
-				Util.info("DEBUG: " + msg);
+		if (Config.Debug && Config.DebugLevel.compareTo(level) >= 0) {
+			Util.info("DEBUG: " + msg);
+		}
 	}
 
 	/**
@@ -78,15 +79,15 @@ public class Util {
 	 * @return true on success
 	 */
 	public static boolean deleteFile(File file) {
-
 		if (file.isDirectory()) {
 			String[] children = file.list();
-			for (int i = 0; i < children.length; i++)
-				if (!deleteFile(new File(file, children[i])))
+			for (int i = 0; i < children.length; i++) {
+				if (!deleteFile(new File(file, children[i]))) {
 					return false;
+				}
+			}
 		}
 		return file.delete();
-
 	}
 
 	/**
@@ -97,10 +98,12 @@ public class Util {
 	 * @throws IOException
 	 */
 	public static void download(URL url, File file) throws IOException {
-		if (!file.getParentFile().exists())
+		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdir();
-		if (file.exists())
+		}
+		if (file.exists()) {
 			file.delete();
+		}
 		file.createNewFile();
 		int size = url.openConnection().getContentLength();
 		Util.info("Downloading " + file.getName() + " (" + size / 1024 + "kb) ...");
@@ -137,8 +140,9 @@ public class Util {
 			i = 0;
 			while (i < line.length()) {
 				part = getMaxString(line.substring(i));
-				if (i + part.length() < line.length() && part.contains(" "))
+				if (i + part.length() < line.length() && part.contains(" ")) {
 					part = part.substring(0, part.lastIndexOf(" "));
+				}
 				part = lastColor.getCustom() + part;
 				player.sendMessage(replaceColors(part));
 				lastColor = getLastColor(part);
@@ -188,8 +192,9 @@ public class Util {
 		Iterator<?> iter = s.iterator();
 		while (iter.hasNext()) {
 			buffer.append(iter.next());
-			if (iter.hasNext())
+			if (iter.hasNext()) {
 				buffer.append(delimiter);
+			}
 		}
 		return buffer.toString();
 	}
@@ -199,8 +204,8 @@ public class Util {
 	 * 
 	 * @return
 	 */
+	@SafeVarargs
 	public static <T> T[] concat(T[] first, T[]... rest) {
-
 		// Read rest
 		int totalLength = first.length;
 		for (T[] array : rest) {
@@ -253,10 +258,11 @@ public class Util {
 		CustomColor lastColor = CustomColor.WHITE;
 		while (i < str.length() - 2) {
 			for (CustomColor color : CustomColor.values()) {
-				if (str.substring(i, i + 2).equalsIgnoreCase(color.getCustom()))
+				if (str.substring(i, i + 2).equalsIgnoreCase(color.getCustom())) {
 					lastColor = color;
+				}
 			}
-			i = i + 1;
+			i++;
 		}
 		return lastColor;
 	}
@@ -268,8 +274,9 @@ public class Util {
 	 * @return inputted string with proper colour values
 	 */
 	public static String replaceColors(String str) {
-		for (CustomColor color : CustomColor.values())
+		for (CustomColor color : CustomColor.values()) {
 			str = str.replace(color.getCustom(), color.getString());
+		}
 		return str;
 	}
 
@@ -282,10 +289,11 @@ public class Util {
 	private static String getMaxString(String str) {
 		for (int i = 0; i < str.length(); i++) {
 			if (stripColors(str.substring(0, i)).length() == maxLength) {
-				if (stripColors(str.substring(i, i + 1)) == "")
+				if (stripColors(str.substring(i, i + 1)) == "") {
 					return str.substring(0, i - 1);
-				else
+				} else {
 					return str.substring(0, i);
+				}
 			}
 		}
 		return str;
@@ -298,13 +306,11 @@ public class Util {
 	 * @return String name
 	 */
 	public static String getEntityName(Entity entity) {
-
-		// Player
-		if (entity instanceof Player)
+		if (entity instanceof Player) {
 			return ((Player) entity).getName();
-		// Other
-		else
+		} else {
 			return entity.getType().getName();
+		}
 	}
 
 	/**
@@ -314,11 +320,29 @@ public class Util {
 	 */
 	public enum CustomColor {
 
-		RED("c", 0xC), DARK_RED("4", 0x4), YELLOW("e", 0xE), GOLD("6", 0x6), GREEN("a", 0xA), DARK_GREEN("2", 0x2),
-		TURQOISE("3", 0x3), AQUA("b", 0xB), DARK_AQUA("8", 0x8), BLUE("9", 0x9), DARK_BLUE("1", 0x1),
-		LIGHT_PURPLE("d", 0xD), DARK_PURPLE("5", 0x5), BLACK("0", 0x0), DARK_GRAY("8", 0x8), GRAY("7", 0x7),
-		WHITE("f", 0xf), MAGIC("k", 0x10), BOLD("l", 0x11), STRIKETHROUGH("m", 0x12), UNDERLINE("n", 0x13),
-		ITALIC("o", 0x14), RESET("r", 0x15);
+		RED("c", 0xC),
+        DARK_RED("4", 0x4),
+        YELLOW("e", 0xE),
+        GOLD("6", 0x6),
+        GREEN("a", 0xA),
+        DARK_GREEN("2", 0x2),
+		TURQOISE("3", 0x3),
+        AQUA("b", 0xB),
+        DARK_AQUA("8", 0x8),
+        BLUE("9", 0x9),
+        DARK_BLUE("1", 0x1),
+		LIGHT_PURPLE("d", 0xD),
+        DARK_PURPLE("5", 0x5),
+        BLACK("0", 0x0),
+        DARK_GRAY("8", 0x8),
+        GRAY("7", 0x7),
+		WHITE("f", 0xf),
+        MAGIC("k", 0x10),
+        BOLD("l", 0x11),
+        STRIKETHROUGH("m", 0x12),
+        UNDERLINE("n", 0x13),
+		ITALIC("o", 0x14),
+        RESET("r", 0x15);
 
 		private final String custom;
 		private final int code;

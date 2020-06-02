@@ -65,13 +65,15 @@ public class Rebuild implements Runnable {
 			DataEntry entry = rebuildQueue.next();
 
 			// If the action can't be rolled back, skip this entry
-			if (entry.getType() == null || !entry.getType().canRollback())
+			if (entry.getType() == null || !entry.getType().canRollback()) {
 				continue;
+			}
 
 			// If the world doesn't exist, skip this entry
 			World world = HawkEye.server.getWorld(entry.getWorld());
-			if (world == null)
+			if (world == null) {
 				continue;
+			}
 
 			// Get some data from the entry
 			Location loc = new Location(world, entry.getX(), entry.getY(), entry.getZ());
@@ -97,7 +99,6 @@ public class Rebuild implements Runnable {
 			Util.sendMessage(session.getSender(), "&cUndo this rebuild using &7/hawk undo");
 
 			Util.debug("Rebuild complete, " + counter + " edits performed");
-
 		}
 
 	}

@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 public class JDCConnection implements Connection {
 	private final Connection conn;
@@ -38,8 +39,9 @@ public class JDCConnection implements Connection {
 	public void close() {
 		inuse = false;
 		try {
-			if (!conn.getAutoCommit())
+			if (!conn.getAutoCommit()) {
 				conn.setAutoCommit(true);
+			}
 		} catch (final SQLException ex) {
 			terminate();
 			ConnectionManager.removeConn(conn);
@@ -285,6 +287,31 @@ public class JDCConnection implements Connection {
 		return conn.unwrap(iface);
 	}
 
+	@Override
+	public void setSchema(String schema) throws SQLException {
+		conn.setSchema(schema);
+	}
+
+	@Override
+	public String getSchema() throws SQLException {
+		return conn.getSchema();
+	}
+
+	@Override
+	public void abort(Executor executor) throws SQLException {
+		conn.abort(executor);
+	}
+
+	@Override
+	public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+		conn.setNetworkTimeout(executor, milliseconds);
+	}
+
+	@Override
+	public int getNetworkTimeout() throws SQLException {
+		return conn.getNetworkTimeout();
+	}
+
 	long getLastUse() {
 		return timestamp;
 	}
@@ -302,8 +329,9 @@ public class JDCConnection implements Connection {
 	}
 
 	synchronized boolean lease() {
-		if (inuse)
+		if (inuse) {
 			return false;
+		}
 		inuse = true;
 		timestamp = System.currentTimeMillis();
 		return true;
@@ -315,5 +343,4 @@ public class JDCConnection implements Connection {
 		} catch (final SQLException ex) {
 		}
 	}
-
 }

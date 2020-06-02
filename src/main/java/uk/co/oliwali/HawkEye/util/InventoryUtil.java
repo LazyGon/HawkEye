@@ -23,13 +23,15 @@ public class InventoryUtil {
 	public static HashMap<String, Integer> compressInventory(ItemStack[] inventory) {
 		HashMap<String, Integer> items = new HashMap<String, Integer>();
 		for (ItemStack item : inventory) {
-			if (item == null)
+			if (item == null) {
 				continue;
+			}
 			String iString = BlockUtil.getItemString(item);
-			if (items.containsKey(iString))
+			if (items.containsKey(iString)) {
 				items.put(iString, items.get(iString) + item.getAmount());
-			else
+			} else {
 				items.put(iString, item.getAmount());
+			}
 		}
 		return items;
 	}
@@ -45,11 +47,12 @@ public class InventoryUtil {
 		for (Entry<String, Integer> item : comp.entrySet()) {
 			int i = item.getValue();
 			while (i > 0) {
-				if (i < 64)
+				if (i < 64) {
 					inv.add(BlockUtil.itemStringToStack(item.getKey(), i));
-				else
+				} else {
 					inv.add(BlockUtil.itemStringToStack(item.getKey(), 64));
-				i = i - 64;
+				}
+				i -= 64;
 			}
 		}
 		return inv.toArray(new ItemStack[0]);
@@ -69,20 +72,22 @@ public class InventoryUtil {
 		List<String> add = new ArrayList<String>();
 		List<String> sub = new ArrayList<String>();
 		for (Entry<String, Integer> item : before.entrySet()) {
-			// If the item does not appear after changes
-			if (!after.containsKey(item.getKey()))
+			if (!after.containsKey(item.getKey())) { // If the item does not appear after changes
 				sub.add(item.getKey() + "," + item.getValue());
-			// If the item is smaller after changes
-			else if (item.getValue() > after.get(item.getKey()))
+			
+			} else if (item.getValue() > after.get(item.getKey())) { // If the item is smaller after changes
 				sub.add(item.getKey() + "," + (item.getValue() - after.get(item.getKey())));
-			// If the item is larger after changes
-			else if (item.getValue() < after.get(item.getKey()))
+			
+			} else if (item.getValue() < after.get(item.getKey())) { // If the item is larger after changes
 				add.add(item.getKey() + "," + (after.get(item.getKey()) - item.getValue()));
+			
+			}
 		}
 		for (Entry<String, Integer> item : after.entrySet()) {
 			// If the item does not appear before changes
-			if (!before.containsKey(item.getKey()))
+			if (!before.containsKey(item.getKey())) {
 				add.add(item.getKey() + "," + item.getValue());
+			}
 		}
 		return Util.join(add, "&") + "@" + Util.join(sub, "&");
 	}

@@ -145,22 +145,25 @@ public class HawkEye extends JavaPlugin {
 			if (Character.isLetter(updateVersion.charAt(updateVersion.length() - 1))) {
 				updateHot = Character.getNumericValue(updateVersion.charAt(updateVersion.length() - 1));
 				updateVer = Integer.parseInt(updateVersion.substring(0, updateVersion.length() - 1));
-			} else
+			} else {
 				updateVer = Integer.parseInt(updateVersion);
+			}
 
 			// Check for hot fixes on current version
 			if (Character.isLetter(version.charAt(version.length() - 1))) {
 				String tversion = version.replace(".", "");
 				curHot = Character.getNumericValue(tversion.charAt(tversion.length() - 1));
 				curVer = Integer.parseInt(tversion.substring(0, tversion.length() - 1));
-			} else
+			} else {
 				curVer = Integer.parseInt(version.replace(".", ""));
+			}
 
 			// Extract Bukkit build from server versions
 			Pattern pattern = Pattern.compile("-b(\\d*?)jnks", Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(server.getVersion());
-			if (!matcher.find() || matcher.group(1) == null)
+			if (!matcher.find() || matcher.group(1) == null) {
 				throw new Exception();
+			}
 			curBuild = Integer.parseInt(matcher.group(1));
 			updateBuild = Integer.parseInt(in.readLine());
 
@@ -170,14 +173,17 @@ public class HawkEye extends JavaPlugin {
 			// Check versions
 			if (updateVer > curVer || updateVer == curVer && updateHot > curHot) {
 				Util.warning("New version of HawkEye available: " + updateVersion);
-				if (updateBuild > curBuild)
+				if (updateBuild > curBuild) {
+
 					Util.warning("Update recommended of CraftBukkit from build " + curBuild + " to " + updateBuild
-							+ " to ensure compatibility");
-				else
+					+ " to ensure compatibility");
+				} else {
 					Util.warning("Compatible with your current version of CraftBukkit");
+				}
 				Util.warning("New version info: " + info);
-			} else
+			} else {
 				Util.info("No updates available for HawkEye");
+			}
 			in.close();
 
 		} catch (Exception e) {
@@ -254,13 +260,16 @@ public class HawkEye extends JavaPlugin {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[]) {
 		if (cmd.getName().equalsIgnoreCase("hawk")) {
-			if (args.length == 0)
+			if (args.length == 0) {
 				args = new String[] { "help" };
+			}
 			outer: for (BaseCommand command : commands.toArray(new BaseCommand[0])) {
 				String[] cmds = command.name.split(" ");
-				for (int i = 0; i < cmds.length; i++)
-					if (i >= args.length || !cmds[i].equalsIgnoreCase(args[i]))
+				for (int i = 0; i < cmds.length; i++) {
+					if (i >= args.length || !cmds[i].equalsIgnoreCase(args[i])) {
 						continue outer;
+					}
+				}
 				return command.run(this, sender, args, commandLabel);
 			}
 			new HelpCommand().run(this, sender, args, commandLabel);

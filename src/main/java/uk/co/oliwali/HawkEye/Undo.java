@@ -71,19 +71,18 @@ public class Undo implements Runnable {
 
 			// If undo doesn't exist
 			DataEntry entry = undoQueue.next();
-			if (entry.getUndoState() == null)
+			if (entry.getUndoState() == null) {
 				continue;
+			}
 
 			// Global undo
 			if (undoType == RollbackType.GLOBAL) {
 				entry.getUndoState().update(true);
 				// Add back into database if delete data is on
-				if (Config.DeleteDataOnRollback)
+				if (Config.DeleteDataOnRollback) {
 					DataManager.addEntry(entry);
-			}
-
-			// Player undo
-			else {
+				}
+			} else { // Player undo
 				Player player = (Player) session.getSender();
 				Block block = entry.getUndoState().getBlock();
 				player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
@@ -95,7 +94,6 @@ public class Undo implements Runnable {
 
 		// Check if undo is finished
 		if (!undoQueue.hasNext()) {
-
 			// End timer
 			Bukkit.getServer().getScheduler().cancelTask(timerID);
 
@@ -104,9 +102,6 @@ public class Undo implements Runnable {
 
 			Util.sendMessage(session.getSender(), "&cUndo complete, &7" + counter + " &cedits performed");
 			Util.debug("Undo complete, " + counter + " edits performed");
-
 		}
-
 	}
-
 }

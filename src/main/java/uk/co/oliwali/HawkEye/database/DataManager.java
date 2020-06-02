@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye.database;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,10 +48,9 @@ public class DataManager extends TimerTask {
 		getConnection().close();
 
 		// Check tables and update player/world lists
-		if (!checkTables())
+		if (!checkTables() || !updateDbLists()) {
 			throw new Exception();
-		if (!updateDbLists())
-			throw new Exception();
+		} 
 
 		// Start cleansing utility
 		try {
@@ -70,10 +70,12 @@ public class DataManager extends TimerTask {
 	 */
 	public static void close() {
 		connections.close();
-		if (cleanseTimer != null)
+		if (cleanseTimer != null) {
 			cleanseTimer.cancel();
-		if (loggingTimer != null)
+		}
+		if (loggingTimer != null) {
 			loggingTimer.cancel();
+		}
 	}
 
 	/**
@@ -85,24 +87,23 @@ public class DataManager extends TimerTask {
 	 */
 	public static void addEntry(DataEntry entry) {
 
-		if (!Config.isLogged(entry.getType()))
+		if (!Config.isLogged(entry.getType())) {
 			return;
+		}
 
 		// Check block filter
-		switch (entry.getType()) {
-			case BLOCK_BREAK:
-				if (Config.BlockFilter.contains(BlockUtil.getBlockStringName(entry.getSqlData())))
-					return;
-				break;
-			case BLOCK_PLACE:
-				String txt = null;
-				if (entry.getSqlData().indexOf("-") == -1)
-					txt = BlockUtil.getBlockStringName(entry.getSqlData());
-				else
-					txt = BlockUtil
-							.getBlockStringName(entry.getSqlData().substring(entry.getSqlData().indexOf("-") + 1));
-				if (Config.BlockFilter.contains(txt))
-					return;
+		if (entry.getType() == DataType.BLOCK_BREAK) {
+			if (Config.BlockFilter.contains(BlockUtil.getBlockStringName(entry.getSqlData()))) {
+				return;
+			}
+		} else if (entry.getType() == DataType.BLOCK_PLACE) {
+			String txt = entry.getSqlData().indexOf("-") == -1
+					? BlockUtil.getBlockStringName(entry.getSqlData())
+					: BlockUtil.getBlockStringName(entry.getSqlData().substring(entry.getSqlData().indexOf("-") + 1));
+			
+			if (Config.BlockFilter.contains(txt)) {
+				return;
+			}
 		}
 
 		// Check world ignore list
@@ -119,17 +120,16 @@ public class DataManager extends TimerTask {
 	 * @return
 	 */
 	public static DataEntry getEntry(int id) {
-		JDCConnection conn = null;
-		try {
-			conn = getConnection();
-			ResultSet res = conn.createStatement()
-					.executeQuery("SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id);
-			res.next();
-			return createEntryFromRes(res);
+		try (
+			JDCConnection conn = getConnection();
+			ResultSet res = conn.createStatement().executeQuery(
+					"SELECT * FROM `" + Config.DbHawkEyeTable + "` WHERE `data_id` = " + id);	
+		) {
+			if (res.next()) {
+				return createEntryFromRes(res);
+			}
 		} catch (Exception ex) {
 			Util.severe("Unable to retrieve data entry from MySQL Server: " + ex);
-		} finally {
-			conn.close();
 		}
 		return null;
 	}
@@ -156,9 +156,11 @@ public class DataManager extends TimerTask {
 	 * @return player name
 	 */
 	public static String getPlayer(int id) {
-		for (Entry<String, Integer> entry : dbPlayers.entrySet())
-			if (entry.getValue() == id)
+		for (Entry<String, Integer> entry : dbPlayers.entrySet()) {
+			if (entry.getValue() == id) {
 				return entry.getKey();
+			}
+		}
 		return null;
 	}
 
@@ -169,9 +171,11 @@ public class DataManager extends TimerTask {
 	 * @return world name
 	 */
 	public static String getWorld(int id) {
-		for (Entry<String, Integer> entry : dbWorlds.entrySet())
-			if (entry.getValue() == id)
+		for (Entry<String, Integer> entry : dbWorlds.entrySet()) {
+			if (entry.getValue() == id) {
 				return entry.getKey();
+			}
+		}
 		return null;
 	}
 
@@ -196,9 +200,18 @@ public class DataManager extends TimerTask {
 	 * @return returns a {@link DataEntry}
 	 * @throws SQLException
 	 */
-	public static DataEntry createEntryFromRes(ResultSet res) throws Exception {
+	public static DataEntry createEntryFromRes(ResultSet res) throws SQLException {
 		DataType type = DataType.fromId(res.getInt("action"));
-		DataEntry entry = (DataEntry) type.getEntryClass().newInstance();
+		if (type == null) {
+			throw new SQLException("Invalid action type id is stored in database.");
+		}
+
+		DataEntry entry;
+		try {
+			entry = (DataEntry) type.getEntryClass().getConstructor().newInstance();
+		} catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+			throw new SQLException("Cannot construct data entry: " + type.getConfigName());
+		}
 		entry.setPlayer(DataManager.getPlayer(res.getInt("player_id")));
 		entry.setDate(res.getString("date"));
 		entry.setDataId(res.getInt("data_id"));
@@ -216,42 +229,32 @@ public class DataManager extends TimerTask {
 	 * Adds a player to the database
 	 */
 	private boolean addPlayer(String name) {
-		JDCConnection conn = null;
-		try {
-			Util.debug("Attempting to add player '" + name + "' to database");
-			conn = getConnection();
+		Util.debug("Attempting to add player '" + name + "' to database");
+		try (JDCConnection conn = getConnection()) {
 			conn.createStatement()
 					.execute("INSERT IGNORE INTO `" + Config.DbPlayerTable + "` (player) VALUES ('" + name + "');");
 		} catch (SQLException ex) {
 			Util.severe("Unable to add player to database: " + ex);
 			return false;
-		} finally {
-			conn.close();
 		}
-		if (!updateDbLists())
-			return false;
-		return true;
+
+		return updateDbLists();
 	}
 
 	/**
 	 * Adds a world to the database
 	 */
 	private boolean addWorld(String name) {
-		JDCConnection conn = null;
-		try {
-			Util.debug("Attempting to add world '" + name + "' to database");
-			conn = getConnection();
+		Util.debug("Attempting to add world '" + name + "' to database");
+		try (JDCConnection conn = getConnection()) {
 			conn.createStatement()
 					.execute("INSERT IGNORE INTO `" + Config.DbWorldTable + "` (world) VALUES ('" + name + "');");
 		} catch (SQLException ex) {
 			Util.severe("Unable to add world to database: " + ex);
 			return false;
-		} finally {
-			conn.close();
 		}
-		if (!updateDbLists())
-			return false;
-		return true;
+		
+		return updateDbLists();
 	}
 
 	/**
@@ -260,31 +263,23 @@ public class DataManager extends TimerTask {
 	 * @return true on success, false on failure
 	 */
 	private boolean updateDbLists() {
-		JDCConnection conn = null;
-		Statement stmnt = null;
-		try {
-			conn = getConnection();
-			stmnt = conn.createStatement();
-			ResultSet res = stmnt.executeQuery("SELECT * FROM `" + Config.DbPlayerTable + "`;");
-			while (res.next())
-				dbPlayers.put(res.getString("player"), res.getInt("player_id"));
-			res = stmnt.executeQuery("SELECT * FROM `" + Config.DbWorldTable + "`;");
-			while (res.next())
-				dbWorlds.put(res.getString("world"), res.getInt("world_id"));
+		try (
+			JDCConnection conn = getConnection();
+			Statement stmnt = conn.createStatement();
+			ResultSet resPlayer = stmnt.executeQuery("SELECT * FROM `" + Config.DbPlayerTable + "`;");
+			ResultSet resWorld = stmnt.executeQuery("SELECT * FROM `" + Config.DbWorldTable + "`;");
+		) {
+			while (resPlayer.next()) {
+				dbPlayers.put(resPlayer.getString("player"), resPlayer.getInt("player_id"));
+			}
+			while (resWorld.next()) {
+				dbWorlds.put(resWorld.getString("world"), resWorld.getInt("world_id"));
+			}
+			return true;
 		} catch (SQLException ex) {
 			Util.severe("Unable to update local data lists from database: " + ex);
 			return false;
-		} finally {
-			try {
-				if (stmnt != null)
-					stmnt.close();
-				conn.close();
-			} catch (SQLException ex) {
-				Util.severe("Unable to close SQL connection: " + ex);
-			}
-
 		}
-		return true;
 	}
 
 	/**
@@ -294,13 +289,12 @@ public class DataManager extends TimerTask {
 	 */
 	private boolean checkTables() {
 
-		JDCConnection conn = null;
-		Statement stmnt = null;
-		try {
-			conn = getConnection();
-			stmnt = conn.createStatement();
+		try (
+			JDCConnection conn = getConnection();
+			Statement stmnt = conn.createStatement();
+		) {
 			DatabaseMetaData dbm = conn.getMetaData();
-
+				
 			// Check if tables exist
 			if (!JDBCUtil.tableExists(dbm, Config.DbPlayerTable)) {
 				Util.info("Table `" + Config.DbPlayerTable + "` not found, creating...");
@@ -318,21 +312,11 @@ public class DataManager extends TimerTask {
 						+ "` (`data_id` int(11) NOT NULL AUTO_INCREMENT, `date` varchar(255) NOT NULL, `player_id` int(11) NOT NULL, `action` int(11) NOT NULL, `world_id` varchar(255) NOT NULL, `x` double NOT NULL, `y` double NOT NULL, `z` double NOT NULL, `data` varchar(500) DEFAULT NULL, `plugin` varchar(255) DEFAULT 'HawkEye', PRIMARY KEY (`data_id`), KEY `player_action_world` (`player_id`,`action`,`world_id`), KEY `x_y_z` (`x`,`y`,`z` ));");
 			}
 
+			return true;
 		} catch (SQLException ex) {
 			Util.severe("Error checking HawkEye tables: " + ex);
 			return false;
-		} finally {
-			try {
-				if (stmnt != null)
-					stmnt.close();
-				conn.close();
-			} catch (SQLException ex) {
-				Util.severe("Unable to close SQL connection: " + ex);
-			}
-
 		}
-		return true;
-
 	}
 
 	/**
@@ -340,15 +324,14 @@ public class DataManager extends TimerTask {
 	 */
 	@Override
 	public void run() {
-		if (queue.isEmpty())
+		if (queue.isEmpty()) {
 			return;
-		JDCConnection conn = getConnection();
-		PreparedStatement stmnt = null;
-		try {
+		}
+
+		try (JDCConnection conn = getConnection()) {
+
 			while (!queue.isEmpty()) {
-
 				DataEntry entry = queue.poll();
-
 				// Sort out player IDs
 				if (!dbPlayers.containsKey(entry.getPlayer()) && !addPlayer(entry.getPlayer())) {
 					Util.debug("Player '" + entry.getPlayer() + "' not found, skipping entry");
@@ -365,14 +348,16 @@ public class DataManager extends TimerTask {
 					continue;
 				}
 
+				PreparedStatement stmnt;
 				// If we are re-inserting we need to also insert the data ID
 				if (entry.getDataId() > 0) {
 					stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable
 							+ "` (date, player_id, action, world_id, x, y, z, data, plugin, data_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 					stmnt.setInt(10, entry.getDataId());
-				} else
+				} else {
 					stmnt = conn.prepareStatement("INSERT into `" + Config.DbHawkEyeTable
 							+ "` (date, player_id, action, world_id, x, y, z, data, plugin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
+				}
 				stmnt.setString(1, entry.getDate());
 				stmnt.setInt(2, dbPlayers.get(entry.getPlayer()));
 				stmnt.setInt(3, entry.getType().getId());
@@ -385,20 +370,8 @@ public class DataManager extends TimerTask {
 				stmnt.executeUpdate();
 				stmnt.close();
 			}
-			conn.close();
 		} catch (Exception ex) {
 			Util.severe("Exception: " + ex);
-		} finally {
-			try {
-				if (stmnt != null)
-					stmnt.close();
-				conn.close();
-			} catch (Exception ex) {
-				Util.severe("Unable to close SQL connection: " + ex);
-			}
-
 		}
-
 	}
-
 }

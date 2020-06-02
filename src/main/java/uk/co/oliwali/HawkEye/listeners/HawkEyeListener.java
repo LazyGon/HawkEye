@@ -31,16 +31,19 @@ public abstract class HawkEyeListener implements Listener {
 		for (int i = 0; i < methods.length; i++) {
 			final Method method = methods[i];
 			final HawkEvent he = method.getAnnotation(HawkEvent.class);
-			if (he == null)
+			if (he == null) {
 				continue;
+			}
 
 			boolean register = false;
 			for (DataType dt : he.dataType()) {
-				if (Config.isLogged(dt))
+				if (Config.isLogged(dt)) {
 					register = true;
+				}
 			}
-			if (!register)
+			if (!register) {	
 				continue;
+			}
 
 			Class<?>[] params = method.getParameterTypes();
 			if (!Event.class.isAssignableFrom(params[0]) || params.length != 1) {

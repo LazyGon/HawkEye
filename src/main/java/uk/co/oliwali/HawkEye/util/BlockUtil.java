@@ -24,8 +24,9 @@ public class BlockUtil {
 	}
 
 	public static String getBlockString(BlockState block) {
-		if (block.getRawData() != 0)
+		if (block.getRawData() != 0) {
 			return block.getTypeId() + ":" + block.getRawData();
+		}
 		return Integer.toString(block.getTypeId());
 	}
 
@@ -36,8 +37,9 @@ public class BlockUtil {
 	 * @return string representing the item
 	 */
 	public static String getItemString(ItemStack stack) {
-		if (stack.getData() != null && stack.getData().getData() != 0)
+		if (stack.getData() != null && stack.getData().getData() != 0) {
 			return stack.getTypeId() + ":" + stack.getData().getData();
+		}
 		return Integer.toString(stack.getTypeId());
 	}
 
@@ -51,8 +53,9 @@ public class BlockUtil {
 	public static ItemStack itemStringToStack(String item, Integer amount) {
 		String[] itemArr = item.split(":");
 		ItemStack stack = new ItemStack(Integer.parseInt(itemArr[0]), amount);
-		if (itemArr.length > 1)
+		if (itemArr.length > 1) {
 			stack.setData(new MaterialData(Integer.parseInt(itemArr[0]), Byte.parseByte(itemArr[1])));
+		}
 		return stack;
 	}
 
@@ -64,12 +67,14 @@ public class BlockUtil {
 	 */
 	public static String getBlockStringName(String blockData) {
 		String[] blockArr = blockData.split(":");
-		if (!Util.isInteger(blockArr[0]))
+		if (!Util.isInteger(blockArr[0])) {
 			return blockData;
-		if (blockArr.length > 1)
+		}
+		if (blockArr.length > 1) {
 			return Material.getMaterial(Integer.parseInt(blockArr[0])).name() + ":" + blockArr[1];
-		else
+		} else {
 			return Material.getMaterial(Integer.parseInt(blockArr[0])).name();
+		}
 	}
 
 	/**
@@ -80,11 +85,13 @@ public class BlockUtil {
 	 */
 	public static void setBlockString(Block block, String blockData) {
 		String[] blockArr = blockData.split(":");
-		if (!Util.isInteger(blockArr[0]))
+		if (!Util.isInteger(blockArr[0])) {
 			return;
+		}
 		block.setTypeId(Integer.parseInt(blockArr[0]));
-		if (blockArr.length > 1)
+		if (blockArr.length > 1) {	
 			block.setData((byte) Integer.parseInt(blockArr[1]));
+		}
 	}
 
 	/**
@@ -94,8 +101,9 @@ public class BlockUtil {
 	 * @return int ID
 	 */
 	public static int getIdFromString(String string) {
-		if (!Util.isInteger(string.split(":")[0]))
+		if (!Util.isInteger(string.split(":")[0])) {
 			return 0;
+		}
 		return Integer.parseInt(string.split(":")[0]);
 	}
 
@@ -106,8 +114,9 @@ public class BlockUtil {
 	 * @return int data
 	 */
 	public static byte getDataFromString(String string) {
-		if (string.split(":").length == 1)
+		if (string.split(":").length == 1) {
 			return 0;
+		}
 		return (byte) Integer.parseInt(string.split(":")[1]);
 	}
 

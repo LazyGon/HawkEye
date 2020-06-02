@@ -1,5 +1,6 @@
 package uk.co.oliwali.HawkEye.entry;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -46,11 +47,11 @@ public class BlockEntry extends DataEntry {
 
 	@Override
 	public boolean rebuild(Block block) {
-		if (data == null)
-			return false;
-		else
-			block.setTypeId(0);
-		return true;
+		if (data != null) {
+			block.setType(Material.AIR);
+			return true;
+		}
+		return false;
 	}
 
 }

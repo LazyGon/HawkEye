@@ -52,12 +52,14 @@ public abstract class BaseCommand {
 
 		// Sort out arguments
 		args.clear();
-		for (String arg : preArgs)
+		for (String arg : preArgs) {
 			args.add(arg);
+		}
 
 		// Remove commands from arguments
-		for (int i = 0; i < name.split(" ").length && i < args.size(); i++)
+		for (int i = 0; i < name.split(" ").length && i < args.size(); i++) {
 			args.remove(0);
+		}
 
 		// Check arg lengths
 		if (argLength > args.size()) {
@@ -66,10 +68,12 @@ public abstract class BaseCommand {
 		}
 
 		// Check if sender should be a player
-		if (bePlayer && !(sender instanceof Player))
+		if (bePlayer && !(sender instanceof Player)) {
 			return false;
-		if (sender instanceof Player)
+		}
+		if (sender instanceof Player) {
 			player = (Player) sender;
+		}
 		if (!permission()) {
 			Util.sendMessage(sender, "&cYou do not have permission to do that!");
 			return false;
