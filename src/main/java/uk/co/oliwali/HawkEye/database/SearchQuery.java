@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.OfflinePlayer;
+
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.SearchParser;
 import uk.co.oliwali.HawkEye.callbacks.BaseCallback;
@@ -58,10 +60,10 @@ public class SearchQuery extends Thread {
 			List<Integer> pids = new ArrayList<>();
 			List<Integer> npids = new ArrayList<>();
 			for (String player : parser.players) {
-				for (Map.Entry<String, Integer> entry : DataManager.dbPlayers.entrySet()) {
-					if (entry.getKey().toLowerCase().contains(player.toLowerCase())) {
+				for (Map.Entry<OfflinePlayer, Integer> entry : DataManager.dbPlayers.entrySet()) {
+					if (entry.getKey().getName().toLowerCase().contains(player.toLowerCase())) {
 						pids.add(entry.getValue());
-					} else if (entry.getKey().toLowerCase().contains(player.replace("!", "").toLowerCase())) {
+					} else if (entry.getKey().getName().toLowerCase().contains(player.replace("!", "").toLowerCase())) {
 						npids.add(entry.getValue());
 					}
 				}

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class DataEntry {
 
 	private String date;
 
-	private String player = null;
+	private OfflinePlayer player = null;
 
 	private String world;
 
@@ -45,12 +46,7 @@ public class DataEntry {
 	public DataEntry() {
 	}
 
-	public DataEntry(Player player, DataType type, Location loc, String data) {
-		setInfo(player, type, loc);
-		setData(data);
-	}
-
-	public DataEntry(String player, DataType type, Location loc, String data) {
+	public DataEntry(OfflinePlayer player, DataType type, Location loc, String data) {
 		setInfo(player, type, loc);
 		setData(data);
 	}
@@ -79,11 +75,11 @@ public class DataEntry {
 		return date;
 	}
 
-	public void setPlayer(String player) {
+	public void setPlayer(OfflinePlayer player) {
 		this.player = player;
 	}
 
-	public String getPlayer() {
+	public OfflinePlayer getPlayer() {
 		return player;
 	}
 
@@ -214,19 +210,15 @@ public class DataEntry {
 	 * @param loc
 	 * @param action
 	 */
-	public void setInfo(Player player, DataType type, Location loc) {
-		setInfo(player.getName(), type, loc);
+	public void setInfo(OfflinePlayer player, DataType type, Location loc) {
+		setInfo(player, type, loc);
 	}
 
-	public void setInfo(String player, DataType type, Location loc) {
-		setInfo(player, "HawkEye", type, loc);
-	}
-
-	public void setInfo(String player, JavaPlugin instance, DataType type, Location loc) {
+	public void setInfo(OfflinePlayer player, JavaPlugin instance, DataType type, Location loc) {
 		setInfo(player, instance.getDescription().getName(), type, loc);
 	}
 
-	public void setInfo(String player, String instance, DataType type, Location loc) {
+	public void setInfo(OfflinePlayer player, String instance, DataType type, Location loc) {
 		loc = Util.getSimpleLocation(loc);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		setDate(sdf.format(Calendar.getInstance().getTime()));

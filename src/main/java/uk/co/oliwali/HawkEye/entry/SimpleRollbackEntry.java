@@ -2,6 +2,7 @@ package uk.co.oliwali.HawkEye.entry;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -17,12 +18,7 @@ public class SimpleRollbackEntry extends DataEntry {
 	public SimpleRollbackEntry() {
 	}
 
-	public SimpleRollbackEntry(Player player, DataType type, Location loc, String data) {
-		setInfo(player, type, loc);
-		this.data = data;
-	}
-
-	public SimpleRollbackEntry(String player, DataType type, Location loc, String data) {
+	public SimpleRollbackEntry(OfflinePlayer player, DataType type, Location loc, String data) {
 		setInfo(player, type, loc);
 		this.data = data;
 	}

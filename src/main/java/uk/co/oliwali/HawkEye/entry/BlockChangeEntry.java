@@ -2,6 +2,7 @@ package uk.co.oliwali.HawkEye.entry;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
@@ -22,25 +23,13 @@ public class BlockChangeEntry extends DataEntry {
 	public BlockChangeEntry() {
 	}
 
-	public BlockChangeEntry(Player player, DataType type, Location loc, BlockState from, BlockState to) {
+	public BlockChangeEntry(OfflinePlayer player, DataType type, Location loc, BlockState from, BlockState to) {
 		setInfo(player, type, loc);
 		this.from = BlockUtil.getBlockString(from);
 		this.to = BlockUtil.getBlockString(to);
 	}
 
-	public BlockChangeEntry(String player, DataType type, Location loc, BlockState from, BlockState to) {
-		setInfo(player, type, loc);
-		this.from = BlockUtil.getBlockString(from);
-		this.to = BlockUtil.getBlockString(to);
-	}
-
-	public BlockChangeEntry(Player player, DataType type, Location loc, String from, String to) {
-		setInfo(player, type, loc);
-		this.from = from;
-		this.to = to;
-	}
-
-	public BlockChangeEntry(String player, DataType type, Location loc, String from, String to) {
+	public BlockChangeEntry(OfflinePlayer player, DataType type, Location loc, String from, String to) {
 		setInfo(player, type, loc);
 		this.from = from;
 		this.to = to;

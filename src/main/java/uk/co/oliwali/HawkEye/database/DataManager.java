@@ -11,7 +11,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import uk.co.oliwali.HawkEye.DataType;
 import uk.co.oliwali.HawkEye.HawkEye;
@@ -153,10 +157,10 @@ public class DataManager extends TimerTask {
 	 * Get a players name from the database player list
 	 * 
 	 * @param id
-	 * @return player name
+	 * @return offlineplayer
 	 */
-	public static String getPlayer(int id) {
-		for (Entry<String, Integer> entry : dbPlayers.entrySet()) {
+	public static OfflinePlayer getPlayer(int id) {
+		for (Entry<OfflinePlayer, Integer> entry : dbPlayers.entrySet()) {
 			if (entry.getValue() == id) {
 				return entry.getKey();
 			}
@@ -228,11 +232,13 @@ public class DataManager extends TimerTask {
 	/**
 	 * Adds a player to the database
 	 */
-	private boolean addPlayer(String name) {
+	private boolean addPlayer(OfflinePlayer player) {
+		String uuid = player.getUniqueId().toString();
+		String name = player.getName();
 		Util.debug("Attempting to add player '" + name + "' to database");
 		try (JDCConnection conn = getConnection()) {
 			conn.createStatement()
-					.execute("INSERT IGNORE INTO `" + Config.DbPlayerTable + "` (player) VALUES ('" + name + "');");
+					.execute("INSERT IGNORE INTO `" + Config.DbPlayerTable + "` (player_uuid, player_name) VALUES ('" + uuid + "', '" + name + "');");
 		} catch (SQLException ex) {
 			Util.severe("Unable to add player to database: " + ex);
 			return false;
@@ -270,7 +276,7 @@ public class DataManager extends TimerTask {
 			ResultSet resWorld = stmnt.executeQuery("SELECT * FROM `" + Config.DbWorldTable + "`;");
 		) {
 			while (resPlayer.next()) {
-				dbPlayers.put(resPlayer.getString("player"), resPlayer.getInt("player_id"));
+				dbPlayers.put(Bukkit.getOfflinePlayer(UUID.fromString(resPlayer.getString("player_uuid"))) , resPlayer.getInt("player_id"));
 			}
 			while (resWorld.next()) {
 				dbWorlds.put(resWorld.getString("world"), resWorld.getInt("world_id"));
@@ -299,7 +305,7 @@ public class DataManager extends TimerTask {
 			if (!JDBCUtil.tableExists(dbm, Config.DbPlayerTable)) {
 				Util.info("Table `" + Config.DbPlayerTable + "` not found, creating...");
 				stmnt.execute("CREATE TABLE IF NOT EXISTS `" + Config.DbPlayerTable
-						+ "` (`player_id` int(11) NOT NULL AUTO_INCREMENT, `player` varchar(255) NOT NULL, PRIMARY KEY (`player_id`), UNIQUE KEY `player` (`player`) );");
+						+ "` (`player_id` int(11) NOT NULL AUTO_INCREMENT, `player_uuid` char(36) NOT NULL, `player_name` varchar(32) NOT NULL, PRIMARY KEY (`player_id`), UNIQUE KEY `player` (`player_uuid`) );");
 			}
 			if (!JDBCUtil.tableExists(dbm, Config.DbWorldTable)) {
 				Util.info("Table `" + Config.DbWorldTable + "` not found, creating...");

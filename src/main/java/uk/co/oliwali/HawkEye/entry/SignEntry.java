@@ -8,6 +8,7 @@ import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -31,17 +32,12 @@ public class SignEntry extends DataEntry {
 	public SignEntry() {
 	}
 
-	public SignEntry(Player player, DataType type, Block block) {
+	public SignEntry(OfflinePlayer player, DataType type, Block block) {
 		interpretSignBlock(block);
 		setInfo(player, type, block.getLocation());
 	}
 
-	public SignEntry(String player, DataType type, Block block) {
-		interpretSignBlock(block);
-		setInfo(player, type, block.getLocation());
-	}
-
-	public SignEntry(Player player, DataType type, Block block, String[] lines) {
+	public SignEntry(OfflinePlayer player, DataType type, Block block, String[] lines) {
 		interpretSignBlock(block);
 		this.lines = lines;
 		setInfo(player, type, block.getLocation());

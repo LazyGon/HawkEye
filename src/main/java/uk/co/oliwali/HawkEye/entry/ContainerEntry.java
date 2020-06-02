@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -23,12 +24,7 @@ public class ContainerEntry extends DataEntry {
 	public ContainerEntry() {
 	}
 
-	public ContainerEntry(Player player, Location location, String diff) {
-		data = diff;
-		setInfo(player, DataType.CONTAINER_TRANSACTION, location);
-	}
-
-	public ContainerEntry(String player, Location location, String diff) {
+	public ContainerEntry(OfflinePlayer player, Location location, String diff) {
 		data = diff;
 		setInfo(player, DataType.CONTAINER_TRANSACTION, location);
 	}

@@ -1,7 +1,7 @@
 package uk.co.oliwali.HawkEye.util;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import uk.co.oliwali.HawkEye.DataType;
@@ -30,11 +30,7 @@ public class HawkEyeAPI {
 	 * @param loc    location of the event
 	 * @param data   data relevant to the event
 	 */
-	public static boolean addCustomEntry(JavaPlugin plugin, String action, Player player, Location loc, String data) {
-		return addCustomEntry(plugin, action, player.getName(), loc, data);
-	}
-
-	public static boolean addCustomEntry(JavaPlugin plugin, String action, String player, Location loc, String data) {
+	public static boolean addCustomEntry(JavaPlugin plugin, String action, OfflinePlayer player, Location loc, String data) {
 		if (plugin == null || action == null || player == null || loc == null || data == null) {
 			return false;
 		}
