@@ -22,7 +22,7 @@ public class Rebuild implements Runnable {
 
 	private final PlayerSession session;
 	private Iterator<DataEntry> rebuildQueue;
-	private final List<DataEntry> undo = new ArrayList<DataEntry>();
+	private final List<DataEntry> undo = new ArrayList<>();
 	private int timerID;
 	private int counter = 0;
 

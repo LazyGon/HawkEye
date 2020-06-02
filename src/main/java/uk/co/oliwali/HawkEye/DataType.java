@@ -58,8 +58,8 @@ public enum DataType {
 	private boolean canRollback;
 	private Class<?> entryClass;
 
-	private static final Map<String, DataType> nameMapping = new HashMap<String, DataType>();
-	private static final Map<Integer, DataType> idMapping = new HashMap<Integer, DataType>();
+	private static final Map<String, DataType> nameMapping = new HashMap<>();
+	private static final Map<Integer, DataType> idMapping = new HashMap<>();
 
 	static {
 		// Mapping to enable quick finding of DataTypes by name or id

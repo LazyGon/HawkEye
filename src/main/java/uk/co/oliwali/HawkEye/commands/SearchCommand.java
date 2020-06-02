@@ -46,7 +46,7 @@ public class SearchCommand extends BaseCommand {
 
 	@Override
 	public void moreHelp() {
-		List<String> acs = new ArrayList<String>();
+		List<String> acs = new ArrayList<>();
 		for (DataType type : DataType.values()) {
 			acs.add(type.getConfigName());
 		}

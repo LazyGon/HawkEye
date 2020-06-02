@@ -49,14 +49,14 @@ public class SearchQuery extends Thread {
 		Util.debug("Beginning search query");
 		String sql = delete ? "DELETE FROM `" : "SELECT * FROM `"
 				+ Config.DbHawkEyeTable + "` WHERE ";
-		List<String> args = new LinkedList<String>();
-		List<Object> binds = new LinkedList<Object>();
+		List<String> args = new LinkedList<>();
+		List<Object> binds = new LinkedList<>();
 
 		// Match players from database list
 		Util.debug("Building players");
 		if (parser.players.size() >= 1) {
-			List<Integer> pids = new ArrayList<Integer>();
-			List<Integer> npids = new ArrayList<Integer>();
+			List<Integer> pids = new ArrayList<>();
+			List<Integer> npids = new ArrayList<>();
 			for (String player : parser.players) {
 				for (Map.Entry<String, Integer> entry : DataManager.dbPlayers.entrySet()) {
 					if (entry.getKey().toLowerCase().contains(player.toLowerCase())) {
@@ -83,8 +83,8 @@ public class SearchQuery extends Thread {
 		// Match worlds from database list
 		Util.debug("Building worlds");
 		if (parser.worlds != null) {
-			List<Integer> wids = new ArrayList<Integer>();
-			List<Integer> nwids = new ArrayList<Integer>();
+			List<Integer> wids = new ArrayList<>();
+			List<Integer> nwids = new ArrayList<>();
 			for (String world : parser.worlds) {
 				for (Map.Entry<String, Integer> entry : DataManager.dbWorlds.entrySet()) {
 					if (entry.getKey().toLowerCase().contains(world.toLowerCase())) {
@@ -111,7 +111,7 @@ public class SearchQuery extends Thread {
 		// Compile actions into SQL form
 		Util.debug("Building actions");
 		if (parser.actions != null && parser.actions.size() > 0) {
-			List<Integer> acs = new ArrayList<Integer>();
+			List<Integer> acs = new ArrayList<>();
 			for (DataType act : parser.actions) {
 				acs.add(act.getId());
 			}
@@ -166,7 +166,7 @@ public class SearchQuery extends Thread {
 		// Util.debug("Searching: " + sql);
 
 		// Set up some stuff for the search
-		List<DataEntry> results = new ArrayList<DataEntry>();
+		List<DataEntry> results = new ArrayList<>();
 		int deleted = 0;
 		
 		try (

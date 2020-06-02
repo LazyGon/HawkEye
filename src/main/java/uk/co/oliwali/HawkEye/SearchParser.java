@@ -27,12 +27,12 @@ import uk.co.oliwali.HawkEye.util.Util;
 public class SearchParser {
 
 	public CommandSender player = null;
-	public List<String> players = new ArrayList<String>();
+	public List<String> players = new ArrayList<>();
 	public Vector loc = null;
 	public Vector minLoc = null;
 	public Vector maxLoc = null;
 	public Integer radius = null;
-	public List<DataType> actions = new ArrayList<DataType>();
+	public List<DataType> actions = new ArrayList<>();
 	public String[] worlds = null;
 	public String dateFrom = null;
 	public String dateTo = null;

@@ -78,7 +78,7 @@ public class SignEntry extends DataEntry {
 		}
 
 		Encoder encoder = Base64.getEncoder();
-		List<String> encoded = new ArrayList<String>();
+		List<String> encoded = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
 			if (lines[i] != null && lines[i].length() > 0) {
 				encoded.add(encoder.encodeToString(lines[i].getBytes()));
@@ -181,7 +181,7 @@ public class SignEntry extends DataEntry {
 			return;
 		}
 		Decoder decoder = Base64.getDecoder();
-		List<String> decoded = new ArrayList<String>();
+		List<String> decoded = new ArrayList<>();
 		String[] encLines = arr[2].split(",");
 		for (int i = 0; i < encLines.length; i++) {
 			try {

@@ -41,7 +41,7 @@ public class ConnectionManager implements Closeable {
 		this.user = user;
 		this.password = password;
 		poolsize = Config.PoolSize;
-		connections = new Vector<JDCConnection>(poolsize);
+		connections = new Vector<>(poolsize);
 		reaper = new ConnectionReaper();
 		reaper.start();
 	}

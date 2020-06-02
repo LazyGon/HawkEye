@@ -21,7 +21,7 @@ public class InventoryUtil {
 	 * @return HashMap<String,Integer>
 	 */
 	public static HashMap<String, Integer> compressInventory(ItemStack[] inventory) {
-		HashMap<String, Integer> items = new HashMap<String, Integer>();
+		HashMap<String, Integer> items = new HashMap<>();
 		for (ItemStack item : inventory) {
 			if (item == null) {
 				continue;
@@ -43,7 +43,7 @@ public class InventoryUtil {
 	 * @return ItemStack array
 	 */
 	public static ItemStack[] uncompressInventory(HashMap<String, Integer> comp) {
-		List<ItemStack> inv = new ArrayList<ItemStack>();
+		List<ItemStack> inv = new ArrayList<>();
 		for (Entry<String, Integer> item : comp.entrySet()) {
 			int i = item.getValue();
 			while (i > 0) {
@@ -69,8 +69,8 @@ public class InventoryUtil {
 	 *         where the first part is additions and second is subtractions
 	 */
 	public static String createDifferenceString(HashMap<String, Integer> before, HashMap<String, Integer> after) {
-		List<String> add = new ArrayList<String>();
-		List<String> sub = new ArrayList<String>();
+		List<String> add = new ArrayList<>();
+		List<String> sub = new ArrayList<>();
 		for (Entry<String, Integer> item : before.entrySet()) {
 			if (!after.containsKey(item.getKey())) { // If the item does not appear after changes
 				sub.add(item.getKey() + "," + item.getValue());
@@ -101,9 +101,9 @@ public class InventoryUtil {
 	 *         First list element is adds, second is subs.
 	 */
 	public static List<HashMap<String, Integer>> interpretDifferenceString(String diff) {
-		List<HashMap<String, Integer>> ops = new ArrayList<HashMap<String, Integer>>();
+		List<HashMap<String, Integer>> ops = new ArrayList<HashMap<>();
 		for (String changes : diff.split("@")) {
-			HashMap<String, Integer> op = new HashMap<String, Integer>();
+			HashMap<String, Integer> op = new HashMap<>();
 			for (String change : changes.split("&")) {
 				if (change.length() == 0)
 					continue;
@@ -113,7 +113,7 @@ public class InventoryUtil {
 			ops.add(op);
 		}
 		if (ops.size() == 1)
-			ops.add(new HashMap<String, Integer>());
+			ops.add(new HashMap<>());
 		return ops;
 	}
 
@@ -131,10 +131,10 @@ public class InventoryUtil {
 		String changeString = "";
 
 		// Loop through ops
-		List<String> add = new ArrayList<String>();
+		List<String> add = new ArrayList<>();
 		for (Entry<String, Integer> item : ops.get(0).entrySet())
 			add.add(item.getValue() + "x " + BlockUtil.getBlockStringName(item.getKey()));
-		List<String> sub = new ArrayList<String>();
+		List<String> sub = new ArrayList<>();
 		for (Entry<String, Integer> item : ops.get(1).entrySet())
 			sub.add(item.getValue() + "x " + BlockUtil.getBlockStringName(item.getKey()));
 

@@ -20,7 +20,7 @@ import uk.co.oliwali.HawkEye.util.InventoryUtil;
  */
 public class ContainerAccessManager {
 
-	private final List<ContainerAccess> accessList = new ArrayList<ContainerAccess>();
+	private final List<ContainerAccess> accessList = new ArrayList<>();
 
 	/**
 	 * Checks whether the player's inventory was open and should now trigger a

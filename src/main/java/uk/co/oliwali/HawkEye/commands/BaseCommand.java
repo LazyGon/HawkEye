@@ -22,7 +22,7 @@ import uk.co.oliwali.HawkEye.util.Util;
 public abstract class BaseCommand {
 
 	public CommandSender sender;
-	public List<String> args = new ArrayList<String>();
+	public List<String> args = new ArrayList<>();
 	public String name;
 	public int argLength = 0;
 	public String usage;

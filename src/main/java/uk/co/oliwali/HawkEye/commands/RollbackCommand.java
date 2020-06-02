@@ -71,7 +71,7 @@ public class RollbackCommand extends BaseCommand {
 
 	@Override
 	public void moreHelp() {
-		List<String> acs = new ArrayList<String>();
+		List<String> acs = new ArrayList<>();
 		for (DataType type : DataType.values())
 			if (type.canRollback())
 				acs.add(type.getConfigName());

@@ -10,7 +10,7 @@ import uk.co.oliwali.HawkEye.util.Util;
 
 public class DeleteEntry implements Runnable {
 
-	private final List<Integer> ids = new ArrayList<Integer>();
+	private final List<Integer> ids = new ArrayList<>();
 
 	public DeleteEntry(Integer id) {
 		ids.add(id);

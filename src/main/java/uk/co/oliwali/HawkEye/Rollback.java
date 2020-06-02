@@ -26,7 +26,7 @@ public class Rollback implements Runnable {
 
 	private final PlayerSession session;
 	private Iterator<DataEntry> rollbackQueue;
-	private final List<DataEntry> undo = new ArrayList<DataEntry>();
+	private final List<DataEntry> undo = new ArrayList<>();
 	private int timerID;
 	private RollbackType rollbackType = RollbackType.GLOBAL;
 

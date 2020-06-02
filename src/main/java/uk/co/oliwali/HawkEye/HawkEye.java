@@ -54,7 +54,7 @@ public class HawkEye extends JavaPlugin {
 	public MonitorPlayerListener monitorPlayerListener = new MonitorPlayerListener(this);
 	public MonitorWorldListener monitorWorldListener = new MonitorWorldListener(this);
 	public ToolListener toolListener = new ToolListener();
-	public static List<BaseCommand> commands = new ArrayList<BaseCommand>();
+	public static List<BaseCommand> commands = new ArrayList<>();
 	public static WorldEdit worldEdit = null;
 	public static ContainerAccessManager containerManager;
 

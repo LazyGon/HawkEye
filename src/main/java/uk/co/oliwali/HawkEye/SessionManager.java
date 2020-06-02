@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
  */
 public class SessionManager {
 
-	private static final HashMap<String, PlayerSession> playerSessions = new HashMap<String, PlayerSession>();
+	private static final HashMap<String, PlayerSession> playerSessions = new HashMap<>();
 
 	public SessionManager() {
 

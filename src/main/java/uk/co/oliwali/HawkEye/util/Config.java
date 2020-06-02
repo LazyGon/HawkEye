@@ -16,9 +16,9 @@ import uk.co.oliwali.HawkEye.HawkEye;
  */
 public class Config {
 
-	public static List<String> CommandFilter = new ArrayList<String>();
-	public static List<String> IgnoreWorlds = new ArrayList<String>();
-	public static List<Integer> BlockFilter = new ArrayList<Integer>();
+	public static List<String> CommandFilter = new ArrayList<>();
+	public static List<String> IgnoreWorlds = new ArrayList<>();
+	public static List<Integer> BlockFilter = new ArrayList<>();
 	public static int MaxLines = 0;
 	public static int MaxRadius;
 	public static int DefaultHereRadius;
