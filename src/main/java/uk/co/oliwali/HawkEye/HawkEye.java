@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.WorldEdit;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -55,7 +55,7 @@ public class HawkEye extends JavaPlugin {
 	public MonitorWorldListener monitorWorldListener = new MonitorWorldListener(this);
 	public ToolListener toolListener = new ToolListener();
 	public static List<BaseCommand> commands = new ArrayList<BaseCommand>();
-	public static WorldEditPlugin worldEdit = null;
+	public static WorldEdit worldEdit = null;
 	public static ContainerAccessManager containerManager;
 
 	/**
@@ -83,7 +83,6 @@ public class HawkEye extends JavaPlugin {
 
 		// Load config and permissions
 		config = new Config(this);
-		new Permission(this);
 
 		versionCheck();
 
@@ -194,16 +193,14 @@ public class HawkEye extends JavaPlugin {
 	 * @param pm PluginManager
 	 */
 	private void checkDependencies(PluginManager pm) {
-
 		// Check if WorldEdit is loaded
-		Plugin we = pm.getPlugin("WorldEdit");
-		if (we != null) {
-			worldEdit = (WorldEditPlugin) we;
+		if (Bukkit.getPluginManager().isPluginEnabled("WorldEdit")) {
+			worldEdit = WorldEdit.getInstance();
 			Util.info("WorldEdit found, selection rollbacks enabled");
-		} else
+		} else {
 			Util.info(
-					"WARNING! WorldEdit not found, WorldEdit selection rollbacks disabled until WorldEdit is available");
-
+				"WARNING! WorldEdit not found, WorldEdit selection rollbacks disabled until WorldEdit is available");
+		}
 	}
 
 	/**

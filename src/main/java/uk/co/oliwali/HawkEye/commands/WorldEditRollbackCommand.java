@@ -13,9 +13,7 @@ import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
 
 import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalPlayer;
-import com.sk89q.worldedit.LocalWorld;
-import com.sk89q.worldedit.bukkit.BukkitPlayer;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 
 /**
@@ -51,9 +49,8 @@ public class WorldEditRollbackCommand extends BaseCommand {
 		// Check if the WorldEdit selection is complete
 		Region region = null;
 		try {
-			LocalPlayer lp = new BukkitPlayer(HawkEye.worldEdit, HawkEye.worldEdit.getWorldEdit().getServer(), player);
-			LocalWorld lw = lp.getWorld();
-			region = HawkEye.worldEdit.getWorldEdit().getSession(lp).getSelection(lw);
+			region = HawkEye.worldEdit.getSessionManager().get(BukkitAdapter.adapt(player))
+					.getSelection(BukkitAdapter.adapt(player.getWorld()));
 		} catch (IncompleteRegionException e) {
 			Util.sendMessage(sender, "&cPlease complete your selection before doing a &7WorldEdit&c rollback!");
 			return true;

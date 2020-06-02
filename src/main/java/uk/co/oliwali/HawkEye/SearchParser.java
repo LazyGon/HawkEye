@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.sk89q.worldedit.IncompleteRegionException;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.regions.Region;
+
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,8 +17,6 @@ import org.bukkit.util.Vector;
 import uk.co.oliwali.HawkEye.util.Config;
 import uk.co.oliwali.HawkEye.util.Permission;
 import uk.co.oliwali.HawkEye.util.Util;
-
-import com.sk89q.worldedit.bukkit.selections.Selection;
 
 /**
  * Class for parsing HawkEye arguments ready to be used by an instance of
@@ -143,21 +145,28 @@ public class SearchParser {
 					if (!Util.isInteger(values[0])) {
 						if ((values[0].equalsIgnoreCase("we") || values[0].equalsIgnoreCase("worldedit"))
 								&& HawkEye.worldEdit != null) {
-							Selection sel = HawkEye.worldEdit.getSelection((Player) player);
-							double lRadius = Math.ceil(sel.getLength() / 2);
-							double wRadius = Math.ceil(sel.getWidth() / 2);
-							double hRadius = Math.ceil(sel.getHeight() / 2);
+							try {
+								Region sel = HawkEye.worldEdit.getSessionManager()
+										.get(BukkitAdapter.adapt((Player) player))
+										.getSelection(BukkitAdapter.adapt(((Player) player).getWorld()));
+								double lRadius = Math.ceil(sel.getLength() / 2);
+								double wRadius = Math.ceil(sel.getWidth() / 2);
+								double hRadius = Math.ceil(sel.getHeight() / 2);
 
-							if (Config.MaxRadius != 0 && (lRadius > Config.MaxRadius || wRadius > Config.MaxRadius
-									|| hRadius > Config.MaxRadius))
-								throw new IllegalArgumentException(
-										"Selection too large, max radius: &7" + Config.MaxRadius);
+								if (Config.MaxRadius != 0 && (lRadius > Config.MaxRadius || wRadius > Config.MaxRadius
+										|| hRadius > Config.MaxRadius))
+									throw new IllegalArgumentException(
+											"Selection too large, max radius: &7" + Config.MaxRadius);
 
-							worldedit = true;
-							minLoc = new Vector(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
-									sel.getMinimumPoint().getZ());
-							maxLoc = new Vector(sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
-									sel.getMaximumPoint().getZ());
+								worldedit = true;
+								minLoc = new Vector(sel.getMinimumPoint().getX(), sel.getMinimumPoint().getY(),
+										sel.getMinimumPoint().getZ());
+								maxLoc = new Vector(sel.getMaximumPoint().getX(), sel.getMaximumPoint().getY(),
+										sel.getMaximumPoint().getZ());
+
+							} catch (IncompleteRegionException e) {
+								throw new IllegalArgumentException("Selection is incomplete. Select pos1 and pos2.");
+							}
 						} else {
 							throw new IllegalArgumentException("Invalid radius supplied: &7" + values[0]);
 						}
